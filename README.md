@@ -1,7 +1,7 @@
 # SDLRT
 
-[![ci](https://github.com/Giuseppe-Bianc/SDLRT/actions/workflows/ci.yml/badge.svg)](https://github.com/Giuseppe-Bianc/SDLRT/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/Giuseppe-Bianc/SDLRT/branch/main/graph/badge.svg)](https://codecov.io/gh/Giuseppe-Bianc/SDLRT)
+<!--[![ci](https://github.com/Giuseppe-Bianc/SDLRT/actions/workflows/ci.yml/badge.svg)](https://github.com/Giuseppe-Bianc/SDLRT/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/Giuseppe-Bianc/SDLRT/branch/main/graph/badge.svg)](https://codecov.io/gh/Giuseppe-Bianc/SDLRT)-->
 [![CodeQL](https://github.com/Giuseppe-Bianc/SDLRT/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/Giuseppe-Bianc/SDLRT/actions/workflows/codeql-analysis.yml)
 
 ## About SDLRT
