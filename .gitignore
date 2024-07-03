@@ -34,3 +34,17 @@ $RECYCLE.BIN/
 .TemporaryItems
 ehthumbs.db
 Thumbs.db
+/src/vendor/sdl/.clang-format
+/src/vendor/sdl/.clang-tidy
+/src/vendor/sdl/.editorconfig
+/src/vendor/sdl/.wikiheaders-options
+/src/vendor/sdl/Android.mk
+/src/vendor/sdl/BUGS.txt
+/src/vendor/sdl/README-SDL.txt
+/src/vendor/sdl/WhatsNew.txt
+/src/vendor/sdl/INSTALL.md
+/src/vendor/sdl/CREDITS.md
+/src/vendor/sdl/README.md
+/src/vendor/sdl/.gitignore
+/src/vendor/sdl/.github
+/src/vendor/sdl/android-project
