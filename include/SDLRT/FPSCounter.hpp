@@ -1,0 +1,27 @@
+//
+// Created by gbian on 03/07/2024.
+//
+// NOLINTBEGIN(*-include-cleaner)
+#pragma once
+
+#include "headers.hpp"
+#include <SDL3/SDL.h>
+class FPSCounter {
+public:
+    explicit FPSCounter(SDL_Window *window, std::string_view title);
+    void frame();
+    void frameInTitle();
+    void updateFPS();
+    [[nodiscard]] long double getFPS() const noexcept;
+    [[nodiscard]] long double getMsPerFrame() const noexcept;
+
+private:
+    using clock = std::chrono::high_resolution_clock;
+    std::chrono::time_point<clock> last_time;
+    int frames;
+    long double fps;
+    long double ms_per_frame;
+    SDL_Window *m_window;
+    std::string_view m_title{};
+};
+// NOLINTEND(*-include-cleaner)
