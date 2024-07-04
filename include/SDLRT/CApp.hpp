@@ -13,12 +13,12 @@
 #include <SDL3/SDL.h>
 class CApp {
 public:
-    CApp();
+    CApp() noexcept;
 
     int OnExecute();
     bool OnInit();
-    void OnEvent(SDL_Event *event);
-    void OnLoop();
+    void OnEvent(const SDL_Event *event) noexcept;
+    void OnLoop() noexcept;
     void OnRender();
     void OnExit();
 

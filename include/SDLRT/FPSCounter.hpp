@@ -8,10 +8,10 @@
 #include <SDL3/SDL.h>
 class FPSCounter {
 public:
-    explicit FPSCounter(SDL_Window *window, std::string_view title);
+    explicit FPSCounter(SDL_Window *window, std::string_view title) noexcept;
     void frame();
     void frameInTitle();
-    void updateFPS();
+    void updateFPS() noexcept;
     [[nodiscard]] long double getFPS() const noexcept;
     [[nodiscard]] long double getMsPerFrame() const noexcept;
 

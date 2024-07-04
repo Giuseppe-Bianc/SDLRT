@@ -42,7 +42,7 @@ private:
     int m_xSize = 0;
     int m_ySize = 0;
     int totalSize = 0;
-    std::size_t m_bufferSize;
+    std::size_t m_bufferSize = 0;
     std::ranges::iota_view<int, int> xRange;
     std::ranges::iota_view<int, int> yRange;
 

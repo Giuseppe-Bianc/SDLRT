@@ -6,7 +6,9 @@
 #include "SDLRT/rayTracing/ObjSphere.hpp"
 
 namespace qbRT {
-    constexpr double aa = 1.0;
+    static inline constexpr double aa = 1.0;
+    static inline constexpr double aad = aa * 2;
+    static inline constexpr double aaq = 4 * aa;
 
     // NOLINTNEXTLINE(*-easily-swappable-parameters)
     bool ObjSphere::TestIntersection(const Ray &castRay, glm::dvec3 &intPoint, [[maybe_unused]] glm::dvec3 &localNormal,
@@ -26,12 +28,12 @@ namespace qbRT {
         const double c = glm::dot(castRay.m_point1, castRay.m_point1) - 1.0;
 
         // Test whether we actually have an intersection.
-        const double intTest = (b * b) - 4.0 * aa * c;
+        const double intTest = (b * b) - aaq * c;
 
         if(intTest > 0.0) {
             const double numSQRT = std::sqrt(intTest);
-            const double t1 = (-b + numSQRT) / (2.0 * aa);
-            const double t2 = (-b - numSQRT) / (2.0 * aa);
+            const double t1 = (-b + numSQRT) / aad;
+            const double t2 = (-b - numSQRT) / aad;
 
             /* If either t1 or t2 are negative, then at least part of the object is
                 behind the camera and so we will ignore it. */

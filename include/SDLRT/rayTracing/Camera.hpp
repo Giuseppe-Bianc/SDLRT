@@ -10,23 +10,23 @@ namespace qbRT {
 
     class Camera {
     public:
-        Camera();
-        void SetPosition(const glm::dvec3 &newPosition);
-        void SetLookAt(const glm::dvec3 &newLookAt);
-        void SetUp(const glm::dvec3 &upVector);
-        void SetLength(double newLength);
-        void SetHorzSize(double newSize);
-        void SetAspect(double newAspectRatio);
+        Camera() noexcept;
+        void SetPosition(const glm::dvec3 &newPosition) noexcept;
+        void SetLookAt(const glm::dvec3 &newLookAt) noexcept;
+        void SetUp(const glm::dvec3 &upVector) noexcept;
+        void SetLength(double newLength) noexcept;
+        void SetHorzSize(double newSize) noexcept;
+        void SetAspect(double newAspectRatio) noexcept;
 
-        glm::dvec3 GetPosition();
-        glm::dvec3 GetLookAt();
-        glm::dvec3 GetUp();
-        glm::dvec3 GetU();
-        glm::dvec3 GetV();
-        glm::dvec3 GetScreenCentre();
-        double GetLength();
-        double GetHorzSize();
-        double GetAspect();
+        glm::dvec3 GetPosition() noexcept;
+        glm::dvec3 GetLookAt() noexcept;
+        glm::dvec3 GetUp() noexcept;
+        glm::dvec3 GetU() noexcept;
+        glm::dvec3 GetV() noexcept;
+        glm::dvec3 GetScreenCentre() noexcept;
+        double GetLength() noexcept;
+        double GetHorzSize() noexcept;
+        double GetAspect() noexcept;
 
         bool GenerateRay(double proScreenX, double proScreenY, Ray &cameraRay) const noexcept;
 
@@ -40,11 +40,11 @@ namespace qbRT {
         double m_cameraHorzSize;
         double m_cameraAspectRatio;
 
-        glm::dvec3 m_alignmentVector;
-        glm::dvec3 m_projectionScreenU;
-        glm::dvec3 m_projectionScreenV;
-        glm::dvec3 m_projectionScreen;
-        glm::dvec3 m_projectionScreenCentre;
+        glm::dvec3 m_alignmentVector{};
+        glm::dvec3 m_projectionScreenU{};
+        glm::dvec3 m_projectionScreenV{};
+        glm::dvec3 m_projectionScreen{};
+        glm::dvec3 m_projectionScreenCentre{};
     };
 
 }  // namespace qbRT

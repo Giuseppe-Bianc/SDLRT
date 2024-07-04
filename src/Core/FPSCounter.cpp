@@ -5,7 +5,7 @@
 #include "SDLRT/FPSCounter.hpp"
 #include "SDLRT/timer/TimeStep.hpp"
 
-FPSCounter::FPSCounter(SDL_Window *window, std::string_view title)
+FPSCounter::FPSCounter(SDL_Window *window, std::string_view title) noexcept
   : last_time(clock::now()), frames(0), fps(0.0L), ms_per_frame(0.0L), m_window(window), m_title(title) {}
 
 void FPSCounter::frame() {
@@ -18,7 +18,7 @@ void FPSCounter::frameInTitle() {
     SDL_SetWindowTitle(m_window, std::format("{} - {:.3LF} fps/{:.3LF} ms", m_title, fps, ms_per_frame).c_str());
 }
 
-void FPSCounter::updateFPS() {
+void FPSCounter::updateFPS() noexcept {
     frames++;
     const auto current_time = clock::now();
     const auto time_step = Timestep(current_time - last_time);

@@ -14,10 +14,10 @@ void qbImage::Initialize(const int xSize, const int ySize, SDL_Renderer *pRender
     m_colorData.resize(xSize, std::vector<SDL_Color>(ySize, {0, 0, 0, 0}));
     m_xSize = xSize;
     m_ySize = ySize;
-    xRange = std::views::iota(0, m_xSize);
-    yRange = std::views::iota(0, m_ySize);
-    totalSize = m_xSize * m_ySize;
-    m_bufferSize = m_xSize * sizeof(SDL_Color);
+    xRange = std::views::iota(0, xSize);
+    yRange = std::views::iota(0, ySize);
+    totalSize = xSize * ySize;
+    m_bufferSize = xSize * sizeof(SDL_Color);
     // Store the pointer to the renderer.
     m_pRenderer = pRenderer;
     LINFO("{}", timer);
@@ -32,10 +32,9 @@ void qbImage::Display() {
     // Allocate memory for a pixel buffer.
     std::vector<SDL_Color> tempPixels{C_ST(totalSize), {0, 0, 0, 0}};
     std::size_t index{};
-
     std::ranges::for_each(xRange, [&](const int x) {
         std::ranges::for_each(yRange, [&](const int y) {
-            index = C_ST((y * m_xSize) + x);
+            index = C_ST((C_ST(y) * m_xSize) + x);
             tempPixels[index] = m_colorData[x][y];
         });
     });
@@ -50,8 +49,9 @@ void qbImage::Display() {
     SDL_RenderTexture(m_pRenderer, m_pTexture, &srcRect, &bounds);
 }
 void qbImage::InitTexture() noexcept {
+    vnd::AutoTimer timer{"init init qbimage::texture"};
     // Delete any previously created texture.
-    if(m_pTexture != nullptr) SDL_DestroyTexture(m_pTexture);
+    if(m_pTexture != nullptr) [[unlikely]] { SDL_DestroyTexture(m_pTexture); }
     // Create the texture that will store the image.
     SDL_Surface *tempSurface = SDL_CreateSurface(m_xSize, m_ySize, SDL_PIXELFORMAT_RGBA32);
     m_pTexture = SDL_CreateTextureFromSurface(m_pRenderer, tempSurface);

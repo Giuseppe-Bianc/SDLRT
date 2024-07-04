@@ -19,12 +19,12 @@ namespace qbRT {
                                       SDL_Color &localColor) const noexcept;
 
         // Function to test whether two floating-point numbers are close to being equal.
-        bool CloseEnough(const double f1, const double f2);
+        bool CloseEnough(const double f1, const double f2) noexcept;
 
         // Public member variables.
     private:
         // The base colour of the object.
-        glm::dvec3 m_baseColor;
+        SDL_Color m_baseColor{};
     };
 
 }  // namespace qbRT

@@ -4,7 +4,7 @@
 
 #include "SDLRT/CApp.hpp"
 
-CApp::CApp() : isRunning(true), pWindow(nullptr), pRenderer(nullptr) {}
+CApp::CApp() noexcept : isRunning(true), pWindow(nullptr), pRenderer(nullptr) {}
 
 bool CApp::OnInit() {
     vnd::Timer inittimer("init SDL");
@@ -30,9 +30,7 @@ bool CApp::OnInit() {
             return false;
         }
 
-        // Initialise the qbImage instance.
         m_image.Initialize(wwidth, wheight, pRenderer);
-        // Set the background color to white.
 
         // Render the scene.
         m_scene.Render(m_image);
@@ -46,7 +44,7 @@ bool CApp::OnInit() {
 }
 
 int CApp::OnExecute() {
-    SDL_Event event;
+    SDL_Event event{};
 
     if(OnInit() == false) { return -1; }
 
@@ -62,7 +60,7 @@ int CApp::OnExecute() {
     return 0;
 }
 
-void CApp::OnEvent(SDL_Event *event) {
+void CApp::OnEvent(const SDL_Event *event) noexcept {
     switch(event->type) {
     case SDL_EVENT_QUIT:
         isRunning = false;
@@ -81,7 +79,7 @@ void CApp::OnEvent(SDL_Event *event) {
     }
 }
 
-void CApp::OnLoop() {}
+void CApp::OnLoop() noexcept {}
 
 void CApp::OnRender() {
     // Set the background colour to white.

@@ -13,7 +13,7 @@ namespace qbRT {
     class Scene {
     public:
         // The default constructor.
-        Scene();
+        Scene() noexcept;
 
         // Function to perform the rendering.
         bool Render(qbImage &outputImage);

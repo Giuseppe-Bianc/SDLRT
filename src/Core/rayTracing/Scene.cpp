@@ -4,9 +4,14 @@
 // NOLINTBEGIN(*-include-cleaner)
 #include "SDLRT/rayTracing/Scene.hpp"
 
+static inline constexpr double max_value = 255.0;
+static inline constexpr auto max_valueui8t = NC_UI8T(255.0);
+static inline constexpr double offset = 9.0;
+static inline constexpr double scale = 0.94605;
+
 namespace qbRT {
 
-    Scene::Scene() {
+    Scene::Scene() noexcept {
         // Configure the camera.
         /*m_camera.SetPosition({0.0, -10.0, 0.0});
         m_camera.SetLookAt({0.0, 0.0, 0.0});
@@ -39,7 +44,7 @@ namespace qbRT {
         vnd::Timer timer{"scene.Render"};
         bool validInt{};
         for(auto x : std::views::iota(0, xSize)) {
-            normX = (static_cast<double>(x) * xFact) - 1.0;
+            normX = (C_D(x) * xFact) - 1.0;
             for(auto y : std::views::iota(0, ySize)) {
                 // Normalize the x and y coordinates.
                 normY = (C_D(y) * yFact) - 1.0;
@@ -57,10 +62,10 @@ namespace qbRT {
 
                     if(dist < minDist) minDist = dist;
 
-                    color = SDL_COLOR(255.0 - ((dist - 9.0) / 0.94605) * 255.0, 0.0, 0.0, 255.0);
+                    color = SDL_COLOR(max_value - ((dist - offset) / scale) * max_value, 0.0, 0.0, max_value);
                     outputImage.SetPixel(x, y, color);
                 } else {
-                    color = {0, 0, 0, 255};
+                    color = {0, 0, 0, max_valueui8t};
                     outputImage.SetPixel(x, y, color);
                 }
             }
@@ -72,7 +77,7 @@ namespace qbRT {
         auto screenV = m_camera.GetV();
 
         // And display to the terminal.
-        LINFO("\nCamera screen centre: {}\nCamera U vector: {}\nCamera V vector:{}", screenCentre, screenU, screenV);
+        LINFO("\nCamera screen centre: {}\nCamera U vector: {}\nCamera V vector: {}", screenCentre, screenU, screenV);
         LINFO("\nMinimum distance: {}\nMaximum distance: {}", minDist, maxDist);
 
         return true;
