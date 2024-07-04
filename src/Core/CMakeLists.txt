@@ -7,6 +7,10 @@ add_library(core sample_library.cpp
         rayTracing/Ray.cpp
         rayTracing/Scene.cpp
         rayTracing/Camera.cpp
+        rayTracing/ObjectBase.cpp
+        ../../include/SDLRT/rayTracing/ObjectBase.hpp
+        rayTracing/ObjSphere.cpp
+        ../../include/SDLRT/rayTracing/ObjSphere.hpp
 )
 
 

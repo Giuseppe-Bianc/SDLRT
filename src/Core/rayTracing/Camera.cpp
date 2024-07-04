@@ -49,29 +49,30 @@ namespace qbRT {
 
     void Camera::UpdateCameraGeometry() {
         // First, compute the vector from the camera position to the LookAt position.
-        m_alignmentVector = m_cameraLookAt - m_cameraPosition;
-        m_alignmentVector = glm::normalize(m_alignmentVector);
+        m_alignmentVector = glm::normalize(m_cameraLookAt - m_cameraPosition);
 
         // Second, compute the alpha and beta unit vectors.
-        m_projectionScreenU = glm::cross(m_alignmentVector, m_cameraUp);
-        m_projectionScreenU = glm::normalize(m_projectionScreenU);
-        m_projectionScreenV = glm::cross(m_projectionScreenU, m_alignmentVector);
-        m_projectionScreenV = glm::normalize(m_projectionScreenV);
+        m_projectionScreenU = glm::normalize(glm::cross(m_alignmentVector, m_cameraUp));
+        m_projectionScreenV = glm::normalize(glm::cross(m_projectionScreenU, m_alignmentVector));
 
         // Thirdly, compute the position of the center point of the screen.
         m_projectionScreenCentre = m_cameraPosition + (m_cameraLength * m_alignmentVector);
 
         // Modify the U and V vectors to match the size and aspect ratio.
-        m_projectionScreenU = m_projectionScreenU * m_cameraHorzSize;
-        m_projectionScreenV = m_projectionScreenV * (m_cameraHorzSize / m_cameraAspectRatio);
+        m_projectionScreenU *= m_cameraHorzSize;
+        m_projectionScreenV *= (m_cameraHorzSize / m_cameraAspectRatio);
     }
 
-    Ray Camera::GenerateRay(float proScreenX, float proScreenY) {
+    bool Camera::GenerateRay(double proScreenX, double proScreenY, Ray &cameraRay) const noexcept {
         // Compute the location of the screen point in world coordinates.
-        glm::dvec3 screenWorldPart1 = m_projectionScreenCentre + (m_projectionScreenU * C_D(proScreenX));
-        glm::dvec3 screenWorldCoordinate = screenWorldPart1 + (m_projectionScreenV * C_D(proScreenY));
+        const auto screenWorldPart1 = m_projectionScreenCentre + (m_projectionScreenU * proScreenX);
+        const auto screenWorldCoordinate = screenWorldPart1 + (m_projectionScreenV * proScreenY);
 
         // Use this point along with the camera position to compute the ray.
-        return Ray(m_cameraPosition, screenWorldCoordinate);
+        cameraRay.SetPoint1(m_cameraPosition);
+        cameraRay.SetPoint2(screenWorldCoordinate);
+        cameraRay.SetLab(screenWorldCoordinate - m_cameraPosition);
+
+        return true;
     }
 }  // namespace qbRT

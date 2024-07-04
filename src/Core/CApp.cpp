@@ -18,6 +18,7 @@ bool CApp::OnInit() {
     LINFO("{}", initwtimer);
 
     if(pWindow != nullptr) {
+        LINFO("creazione SDL window di dimensioni(w: {}, h: {})", wwidth, wheight);
         // Initialise the renderer.
         vnd::Timer initrtimer("init SDL_Renderer");
         pRenderer = SDL_CreateRenderer(pWindow, nullptr);
@@ -31,22 +32,11 @@ bool CApp::OnInit() {
 
         // Initialise the qbImage instance.
         m_image.Initialize(wwidth, wheight, pRenderer);
-        qbRT::Camera testCamera;
-        testCamera.SetPosition(glm::dvec3{0.0, 0.0, 0.0});
-        testCamera.SetLookAt(glm::dvec3{0.0, 2.0, 0.0});
-        testCamera.SetUp(glm::dvec3{0.0, 0.0, 1.0});
-        testCamera.SetLength(1.0);
-        testCamera.SetHorzSize(1.0);
-        testCamera.SetAspect(1.0);
-        testCamera.UpdateCameraGeometry();
+        // Set the background color to white.
 
-        // Get the screen centre and U,V vectors and display.
-        auto screenCentre = testCamera.GetScreenCentre();
-        auto screenU = testCamera.GetU();
-        auto screenV = testCamera.GetV();
+        // Render the scene.
+        m_scene.Render(m_image);
 
-        // And display to the terminal.
-        LINFO("\nCamera screen centre: {}\nCamera U vector: {}\nCamera V vector:{}", screenCentre, screenU, screenV);
     } else {
         LERROR("SDL_CreateWindow Error: {}", SDL_GetError());
         return false;
@@ -78,7 +68,15 @@ void CApp::OnEvent(SDL_Event *event) {
         isRunning = false;
         break;
     case SDL_EVENT_KEY_DOWN:
-        isRunning = false;
+        switch(event->key.key) {
+        case SDLK_ESCAPE:
+            isRunning = false;
+            break;
+        default:
+            break;
+        }
+        break;
+    default:
         break;
     }
 }
@@ -90,7 +88,6 @@ void CApp::OnRender() {
     SDL_SetRenderDrawColor(pRenderer, 255, 255, 255, 255);
     SDL_RenderClear(pRenderer);
 
-    m_scene.Render(m_image);
     // Display the image.
     m_image.Display();
 
@@ -99,9 +96,15 @@ void CApp::OnRender() {
 }
 
 void CApp::OnExit() {
+    vnd::AutoTimer timer{"OnExit"};
     // Tidy up SDL2 stuff.
-    SDL_DestroyRenderer(pRenderer);
-    SDL_DestroyWindow(pWindow);
-    pWindow = NULL;
+    if(pRenderer != nullptr) {
+        SDL_DestroyRenderer(pRenderer);
+        pRenderer = nullptr;
+    }
+    if(pWindow != nullptr) {
+        SDL_DestroyWindow(pWindow);
+        pWindow = nullptr;
+    }
     SDL_Quit();
 }

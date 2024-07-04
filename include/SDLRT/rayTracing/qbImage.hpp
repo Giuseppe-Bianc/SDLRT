@@ -23,22 +23,20 @@ public:
     void Initialize(const int xSize, const int ySize, SDL_Renderer *pRenderer);
 
     // Function to set pixels.
-    void SetPixel(const int x, const int y, const double red, const double green, const double blue);
+    void SetPixel(const int x, const int y, const SDL_Color &color);
 
     // Function to return the image for display.
     void Display();
 
-    [[nodiscard]] int &GetXSize() noexcept { return m_xSize; }
-    [[nodiscard]] int &GetYSize() noexcept { return m_ySize; }
+    [[nodiscard]] int GetXSize() const noexcept { return m_xSize; }
+    [[nodiscard]] int GetYSize() const noexcept { return m_ySize; }
 
 private:
-    std::uint32_t ConvertColor(const double red, const double green, const double blue);
-    void InitTexture();
+    // std::uint32_t ConvertColor(const double red, const double green, const double blue);
+    void InitTexture() noexcept;
 
     // Arrays to store image data.
-    std::vector<std::vector<double>> m_rChannel;
-    std::vector<std::vector<double>> m_gChannel;
-    std::vector<std::vector<double>> m_bChannel;
+    std::vector<std::vector<SDL_Color>> m_colorData;
 
     // And store the size of the image.
     int m_xSize = 0;
@@ -49,8 +47,6 @@ private:
     std::ranges::iota_view<int, int> yRange;
 
     // SDL2 stuff.
-    SDL_Renderer *m_pRenderer;
-    SDL_Texture *m_pTexture;
-    SDL_FRect srcRect;
-    SDL_FRect bounds;
+    SDL_Renderer *m_pRenderer{nullptr};
+    SDL_Texture *m_pTexture{nullptr};
 };

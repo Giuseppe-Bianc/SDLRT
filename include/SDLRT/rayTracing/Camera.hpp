@@ -28,7 +28,7 @@ namespace qbRT {
         double GetHorzSize();
         double GetAspect();
 
-        Ray GenerateRay(float proScreenX, float proScreenY);
+        bool GenerateRay(double proScreenX, double proScreenY, Ray &cameraRay) const noexcept;
 
         void UpdateCameraGeometry();
 

@@ -97,6 +97,13 @@ static inline constexpr const auto *NEWL = CNL;  // FreeBSD
 static inline constexpr const auto *NEWL = CNL;  // Default case
 #endif
 DISABLE_WARNINGS_POP()
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+#define SDL_COLOR(r, g, b, a)                                                                                                              \
+    { C_UI8T(b), C_UI8T(g), C_UI8T(r), C_UI8T(a) }
+#else
+#define SDL_COLOR(r, g, b, a)                                                                                                              \
+    { C_UI8T(r), C_UI8T(g), C_UI8T(b), C_UI8T(a) }
+#endif
 
 [[nodiscard]] inline constexpr auto is_divisor(std::integral auto n, std::integral auto d) noexcept -> bool { return n % d == 0; }
 

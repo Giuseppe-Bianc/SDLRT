@@ -1,0 +1,30 @@
+//
+// Created by gbian on 03/07/2024.
+//
+
+#pragma once
+#include "Ray.hpp"
+#include <SDL3/SDL.h>
+
+namespace qbRT {
+
+    class ObjectBase {
+    public:
+        // Constructor and destructor.
+        ObjectBase() = default;
+        virtual ~ObjectBase() = default;
+
+        // Function to test for intersections.
+        virtual bool TestIntersection(const Ray &castRay, glm::dvec3 &intPoint, glm::dvec3 &localNormal,
+                                      SDL_Color &localColor) const noexcept;
+
+        // Function to test whether two floating-point numbers are close to being equal.
+        bool CloseEnough(const double f1, const double f2);
+
+        // Public member variables.
+    private:
+        // The base colour of the object.
+        glm::dvec3 m_baseColor;
+    };
+
+}  // namespace qbRT

@@ -4,22 +4,27 @@
 
 #pragma once
 
+#include "../timer/Timer.hpp"
+#include "Camera.hpp"
+#include "ObjSphere.hpp"
 #include "qbImage.hpp"
-
 namespace qbRT {
 
     class Scene {
     public:
         // The default constructor.
-        Scene() = default;
+        Scene();
 
         // Function to perform the rendering.
         bool Render(qbImage &outputImage);
 
         // Private functions.
     private:
-        // Private members.
-    private:
+        // The camera that we will use.
+        Camera m_camera;
+
+        // A unit sphere on the origin, for testing.
+        ObjSphere m_testSphere;
     };
 
 }  // namespace qbRT
