@@ -24,9 +24,10 @@ public:
 
     // Function to set pixels.
     void SetPixel(const int x, const int y, const SDL_Color &color);
+    std::vector<SDL_Color> ArrangePixels();
 
     // Function to return the image for display.
-    void Display();
+    void Display(const std::vector<SDL_Color> &colorData);
 
     [[nodiscard]] int GetXSize() const noexcept { return m_xSize; }
     [[nodiscard]] int GetYSize() const noexcept { return m_ySize; }

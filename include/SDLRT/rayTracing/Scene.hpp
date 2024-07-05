@@ -7,6 +7,7 @@
 #include "../timer/Timer.hpp"
 #include "Camera.hpp"
 #include "ObjSphere.hpp"
+#include "PointLight.hpp"
 #include "qbImage.hpp"
 namespace qbRT {
 
@@ -24,7 +25,8 @@ namespace qbRT {
         Camera m_camera;
 
         // A unit sphere on the origin, for testing.
-        ObjSphere m_testSphere;
+        std::vector<std::shared_ptr<ObjectBase>> m_objectList;
+        std::vector<std::shared_ptr<LightBase>> m_lightList;
     };
 
 }  // namespace qbRT

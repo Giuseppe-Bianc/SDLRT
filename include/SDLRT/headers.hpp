@@ -72,6 +72,7 @@ static inline constexpr long double NINFINITY = std::numeric_limits<long double>
 static inline constexpr long double PI = std::numbers::pi_v<long double>;
 static inline constexpr long double TWO_PI = 2 * PI;
 static inline constexpr long double HALF_PI = PI / 2;
+static inline constexpr auto HALF_PID = NC_D(PI / 2);
 static inline constexpr const auto *CNL = "\n";
 static inline constexpr const auto *CCR = "\r";
 static inline constexpr auto NL = CNL[0];
@@ -98,11 +99,11 @@ static inline constexpr const auto *NEWL = CNL;  // Default case
 #endif
 DISABLE_WARNINGS_POP()
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
-#define SDL_COLOR(r, g, b, a)                                                                                                              \
-    { NC_UI8T(b), NC_UI8T(g), NC_UI8T(r), NC_UI8T(a) }
+#define SDL_COLOR(r, g, b)                                                                                                              \
+    { NC_UI8T(b), NC_UI8T(g), NC_UI8T(r),  255  }
 #else
 #define SDL_COLOR(r, g, b, a)                                                                                                              \
-    { NC_UI8T(r), NC_UI8T(g), NC_UI8T(b), NC_UI8T(a) }
+    { NC_UI8T(r), NC_UI8T(g), NC_UI8T(b), 255  }
 #endif
 
 [[nodiscard]] inline constexpr auto is_divisor(std::integral auto n, std::integral auto d) noexcept -> bool { return n % d == 0; }

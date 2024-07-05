@@ -5,13 +5,13 @@
 #include "SDLRT/rayTracing/qbImage.hpp"
 
 #include <SDLRT/timer/Timer.hpp>
-
+DISABLE_WARNINGS_PUSH(26447)
 static inline constexpr std::uint8_t MAX_COLOR_VALUE = 255;
 static inline constexpr auto ALPHA_VALUE = MAX_COLOR_VALUE;
 // Function to initialize.
 void qbImage::Initialize(const int xSize, const int ySize, SDL_Renderer *pRenderer) {
     vnd::Timer timer{"init qbimage"};
-    m_colorData.resize(xSize, std::vector<SDL_Color>(ySize, {0, 0, 0, 0}));
+    m_colorData.resize(xSize, std::vector<SDL_Color>(ySize, SDL_COLOR(0.0,0.0,0.0)));
     m_xSize = xSize;
     m_ySize = ySize;
     xRange = std::views::iota(0, xSize);
@@ -28,9 +28,8 @@ void qbImage::Initialize(const int xSize, const int ySize, SDL_Renderer *pRender
 // Function to set pixels.
 void qbImage::SetPixel(const int x, const int y, const SDL_Color &color) { m_colorData.at(x).at(y) = color; }
 
-void qbImage::Display() {
-    // Allocate memory for a pixel buffer.
-    std::vector<SDL_Color> tempPixels{C_ST(totalSize), {0, 0, 0, 0}};
+std::vector<SDL_Color> qbImage::ArrangePixels() {
+    std::vector<SDL_Color> tempPixels{C_ST(totalSize),SDL_COLOR(0.0,0.0,0.0)};
     std::size_t index{};
     std::ranges::for_each(xRange, [&](const int x) {
         std::ranges::for_each(yRange, [&](const int y) {
@@ -38,9 +37,14 @@ void qbImage::Display() {
             tempPixels[index] = m_colorData[x][y];
         });
     });
+    return tempPixels;
+}
+
+void qbImage::Display(const std::vector<SDL_Color> &colorData) {
+    // Allocate memory for a pixel buffer.
 
     // Update the texture with the pixel buffer.
-    SDL_UpdateTexture(m_pTexture, nullptr, tempPixels.data(), C_I(m_bufferSize));
+    SDL_UpdateTexture(m_pTexture, nullptr, colorData.data(), C_I(m_bufferSize));
 
     // Copy the texture to the renderer.
     const SDL_FRect srcRect{0, 0, C_F(m_xSize), C_F(m_ySize)};
@@ -58,3 +62,4 @@ void qbImage::InitTexture() noexcept {
     SDL_DestroySurface(tempSurface);
 }
 // NOLINTEND(*-include-cleaner)
+DISABLE_WARNINGS_POP()

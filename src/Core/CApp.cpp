@@ -35,6 +35,7 @@ bool CApp::OnInit() {
         // Render the scene.
         m_scene.Render(m_image);
 
+        m_pixels = m_image.ArrangePixels();
     } else {
         LERROR("SDL_CreateWindow Error: {}", SDL_GetError());
         return false;
@@ -47,7 +48,6 @@ int CApp::OnExecute() {
     SDL_Event event{};
 
     if(OnInit() == false) { return -1; }
-
     FPSCounter counter(pWindow, wtile.data());
     while(isRunning) {
         while(SDL_PollEvent(&event) != 0) { OnEvent(&event); }
@@ -87,7 +87,7 @@ void CApp::OnRender() {
     SDL_RenderClear(pRenderer);
 
     // Display the image.
-    m_image.Display();
+    m_image.Display(m_pixels);
 
     // Show the result.
     SDL_RenderPresent(pRenderer);

@@ -25,6 +25,7 @@ public:
 private:
     qbImage m_image;
     qbRT::Scene m_scene;
+    std::vector<SDL_Color>  m_pixels{};
     // SDL2 stuff.
     bool isRunning;
     SDL_Window *pWindow;
