@@ -10,11 +10,10 @@ add_library(core sample_library.cpp
         rayTracing/ObjectBase.cpp
         rayTracing/ObjSphere.cpp
         rayTracing/LightBase.cpp
-        ../../include/SDLRT/rayTracing/LightBase.hpp
         rayTracing/PointLight.cpp
-        ../../include/SDLRT/rayTracing/PointLight.hpp
         rayTracing/GTform.cpp
-        ../../include/SDLRT/rayTracing/GTform.hpp
+        rayTracing/ObjPlane.cpp
+        ../../include/SDLRT/rayTracing/ObjPlane.hpp
 )
 
 

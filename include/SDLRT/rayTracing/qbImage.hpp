@@ -32,7 +32,7 @@ public:
     [[nodiscard]] int GetYSize() const noexcept { return m_ySize; }
 
 private:
-    // std::uint32_t ConvertColor(const double red, const double green, const double blue);
+    // std::uint32_t ConvertColor(const double red, const double green, const double blue) const noexcept;
     void InitTexture() noexcept;
 
     // Arrays to store image data.

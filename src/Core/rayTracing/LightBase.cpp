@@ -11,5 +11,5 @@ namespace qbRT {
         return false;
     }
 
-} // qbRT
+}  // namespace qbRT
 DISABLE_WARNINGS_POP()

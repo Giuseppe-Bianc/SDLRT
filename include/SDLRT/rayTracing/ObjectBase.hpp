@@ -19,7 +19,7 @@ namespace qbRT {
                                       SDL_Color &localColor) const noexcept;
         void SetTransformMatrix(const GTform &transformMatrix) noexcept;
         // Function to test whether two floating-point numbers are close to being equal.
-        bool CloseEnough(const double f1, const double f2) noexcept;
+        bool CloseEnough(const double f1, const double f2) const noexcept;
 
         // Public member variables.
         // The base colour of the object.
@@ -28,4 +28,4 @@ namespace qbRT {
     };
 
 }  // namespace qbRT
-// NOLINTEND(*-include-cleaner)
+   // NOLINTEND(*-include-cleaner)

@@ -43,7 +43,7 @@ namespace qbRT {
         m_objectList.at(1)->m_baseColor = SDL_COLOR(255.0, 128.0, 0.0);
         m_objectList.at(2)->m_baseColor = SDL_COLOR(255.0, 200.0, 0.0);
         m_lightList.push_back(MAKE_SHARED(PointLight, PointLight()));
-        m_lightList.at(0)->m_location = glm::dvec3{5.0, -10.0, 5.0};
+        m_lightList.at(0)->m_location = {5.0, -10.0, 5.0};
         m_lightList.at(0)->m_color = SDL_COLOR(255.0, 255.0, 255.0);
     }
     void updateDistances(double dist, double &maxDist, double &minDist) noexcept {
@@ -52,7 +52,6 @@ namespace qbRT {
     }
     bool Scene::Render(qbImage &outputImage) const {
         // Get the dimensions of the output image.
-        // SDL_Color color{0, 0, 0, 255};
         const auto xSize = outputImage.GetXSize();
         const auto ySize = outputImage.GetYSize();
         const auto halfXSise = C_D(xSize) / 2.0;
@@ -74,9 +73,9 @@ namespace qbRT {
         double dist = 0;
         vnd::Timer timer{"scene.Render"};
         bool validInt{};
-        for(auto x : std::views::iota(0, xSize)) {
+        for(const auto &x : std::views::iota(0, xSize)) {
             normX = (C_D(x) * xFact) - 1.0;
-            for(auto y : std::views::iota(0, ySize)) {
+            for(const auto &y : std::views::iota(0, ySize)) {
                 // Normalize the x and y coordinates.
                 normY = (C_D(y) * yFact) - 1.0;
 

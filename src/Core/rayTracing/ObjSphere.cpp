@@ -66,4 +66,4 @@ namespace qbRT {
 }  // namespace qbRT
 
 DISABLE_WARNINGS_POP()
-   // NOLINTEND(*-include-cleaner *-identifier-length))
+// NOLINTEND(*-include-cleaner *-identifier-length))

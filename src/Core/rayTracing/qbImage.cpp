@@ -5,7 +5,7 @@
 #include "SDLRT/rayTracing/qbImage.hpp"
 
 #include <SDLRT/timer/Timer.hpp>
-DISABLE_WARNINGS_PUSH(26446 26447)
+DISABLE_WARNINGS_PUSH(6022 26446 26447)
 // Function to initialize.
 void qbImage::Initialize(const int xSize, const int ySize, SDL_Renderer *pRenderer) {
     vnd::Timer timer{"init qbimage"};
@@ -31,10 +31,10 @@ void qbImage::SetPixel(const int x, const int y, const SDL_Color &color) { m_col
 
 std::vector<SDL_Color> qbImage::ArrangePixels() const {
     vnd::Timer timer{"qbimage::ArrangePixels"};
-    std::vector tempPixels{C_ST(totalSize), SDL_COLOR(0.0, 0.0, 0.0)};
+    std::vector<SDL_Color> tempPixels(C_ST(totalSize), SDL_COLOR(0.0, 0.0, 0.0));
     std::size_t index{};
-    for (const auto& x : xRange) {
-        for (const auto& y : yRange) {
+    for(const auto &x : xRange) {
+        for(const auto &y : yRange) {
             index = C_ST((C_ST(y) * m_xSize) + x);
             tempPixels[index] = m_colorData[x][y];
         }
