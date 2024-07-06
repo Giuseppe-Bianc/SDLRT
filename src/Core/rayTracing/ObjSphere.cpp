@@ -2,7 +2,7 @@
 // Created by gbian on 03/07/2024.
 //
 
-// NOLINTBEGIN(*-include-cleaner)
+// NOLINTBEGIN(*-include-cleaner *-identifier-length))
 #include "SDLRT/rayTracing/ObjSphere.hpp"
 
 DISABLE_WARNINGS_PUSH(26447)
@@ -15,7 +15,7 @@ namespace qbRT {
     // NOLINTNEXTLINE(*-easily-swappable-parameters)
     bool ObjSphere::TestIntersection(const Ray &castRay, glm::dvec3 &intPoint, glm::dvec3 &localNormal,
                                      [[maybe_unused]] SDL_Color &localColor) const noexcept {
-        Ray bckRay = m_transformMatrix.Apply(castRay, BCKTFORM);
+        const Ray bckRay = m_transformMatrix.Apply(castRay, BCKTFORM);
         // Compute the values of a, b and c.
         const glm::dvec3 vhat = glm::normalize(bckRay.m_lab);
 
@@ -31,7 +31,7 @@ namespace qbRT {
 
         // Test whether we actually have an intersection.
         const double intTest = (b * b) - aaq * c;
-        glm::dvec3 poi;
+        glm::dvec3 poi{};
 
         if(intTest > 0.0) {
             const double numSQRT = std::sqrt(intTest);
@@ -51,10 +51,10 @@ namespace qbRT {
                 }*/
                 // Calculate the intersection point based on the smaller t value
                 const double tMin = (t1 < t2) ? t1 : t2;
-                poi = bckRay.m_point1 +  (vhat * tMin);
+                poi = bckRay.m_point1 + (vhat * tMin);
             }
             intPoint = m_transformMatrix.Apply(poi, FWDTFORM);
-            glm::dvec3 newObjOrigin = m_transformMatrix.Apply(glm::dvec3{0.0, 0.0, 0.0}, qbRT::FWDTFORM);
+            const glm::dvec3 newObjOrigin = m_transformMatrix.Apply(glm::dvec3{0.0, 0.0, 0.0}, qbRT::FWDTFORM);
             localNormal = glm::normalize(intPoint - newObjOrigin);
             localColor = m_baseColor;
             return true;
@@ -64,6 +64,6 @@ namespace qbRT {
         }
     }
 }  // namespace qbRT
-   // NOLINTEND(*-include-cleaner)
 
 DISABLE_WARNINGS_POP()
+   // NOLINTEND(*-include-cleaner *-identifier-length))

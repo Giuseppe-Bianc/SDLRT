@@ -1,11 +1,10 @@
 //
 // Created by gbian on 03/07/2024.
 //
-
+// NOLINTBEGIN(*-include-cleaner)
 #pragma once
 
-#include "../headers.hpp"
-#include <SDL3/SDL.h>
+#include "../headersSDL.hpp"
 
 class qbImage {
 public:
@@ -24,10 +23,10 @@ public:
 
     // Function to set pixels.
     void SetPixel(const int x, const int y, const SDL_Color &color);
-    std::vector<SDL_Color> ArrangePixels();
+    [[nodiscard]] std::vector<SDL_Color> ArrangePixels() const;
 
     // Function to return the image for display.
-    void Display(const std::vector<SDL_Color> &colorData);
+    void Display(const std::vector<SDL_Color> &colorData) const noexcept;
 
     [[nodiscard]] int GetXSize() const noexcept { return m_xSize; }
     [[nodiscard]] int GetYSize() const noexcept { return m_ySize; }
@@ -43,6 +42,8 @@ private:
     int m_xSize = 0;
     int m_ySize = 0;
     int totalSize = 0;
+    SDL_FRect srcRect{};
+    SDL_FRect bounds{};
     std::size_t m_bufferSize = 0;
     std::ranges::iota_view<int, int> xRange;
     std::ranges::iota_view<int, int> yRange;
@@ -51,3 +52,4 @@ private:
     SDL_Renderer *m_pRenderer{nullptr};
     SDL_Texture *m_pTexture{nullptr};
 };
+// NOLINTEND(*-include-cleaner)

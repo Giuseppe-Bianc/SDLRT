@@ -3,7 +3,7 @@
 //
 
 #pragma once
-#include "../headers.hpp"
+#include "../headersSDL.hpp"
 namespace qbRT {
 
     class Ray {
