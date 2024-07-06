@@ -17,7 +17,7 @@ namespace qbRT {
         Scene() noexcept;
 
         // Function to perform the rendering.
-        bool Render(qbImage &outputImage);
+        bool Render(qbImage &outputImage) const;
 
         // Private functions.
     private:

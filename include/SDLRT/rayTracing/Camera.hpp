@@ -1,7 +1,7 @@
 //
 // Created by gbian on 03/07/2024.
 //
-
+// NOLINTBEGIN(*-include-cleaner)
 #pragma once
 
 #include "Ray.hpp"
@@ -18,24 +18,24 @@ namespace qbRT {
         void SetHorzSize(double newSize) noexcept;
         void SetAspect(double newAspectRatio) noexcept;
 
-        glm::dvec3 GetPosition() noexcept;
-        glm::dvec3 GetLookAt() noexcept;
-        glm::dvec3 GetUp() noexcept;
-        glm::dvec3 GetU() noexcept;
-        glm::dvec3 GetV() noexcept;
-        glm::dvec3 GetScreenCentre() noexcept;
-        double GetLength() noexcept;
-        double GetHorzSize() noexcept;
-        double GetAspect() noexcept;
+        glm::dvec3 GetPosition() const noexcept;
+        glm::dvec3 GetLookAt() const noexcept;
+        glm::dvec3 GetUp() const noexcept;
+        glm::dvec3 GetU() const noexcept;
+        glm::dvec3 GetV()  const noexcept;
+        glm::dvec3 GetScreenCentre()  const noexcept;
+        double GetLength() const noexcept;
+        double GetHorzSize() const noexcept;
+        double GetAspect()  const noexcept;
 
         bool GenerateRay(double proScreenX, double proScreenY, Ray &cameraRay) const noexcept;
 
         void UpdateCameraGeometry();
 
     private:
-        glm::dvec3 m_cameraPosition;
-        glm::dvec3 m_cameraLookAt;
-        glm::dvec3 m_cameraUp;
+        glm::dvec3 m_cameraPosition{};
+        glm::dvec3 m_cameraLookAt{};
+        glm::dvec3 m_cameraUp{};
         double m_cameraLength;
         double m_cameraHorzSize;
         double m_cameraAspectRatio;
@@ -48,3 +48,4 @@ namespace qbRT {
     };
 
 }  // namespace qbRT
+// NOLINTEND(*-include-cleaner)

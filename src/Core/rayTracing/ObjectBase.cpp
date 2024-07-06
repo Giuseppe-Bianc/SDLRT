@@ -12,10 +12,7 @@ namespace qbRT {
         return false;
     }
 
-    void ObjectBase::SetTransformMatrix(const GTform &transformMatrix) {
-        m_transformMatrix = transformMatrix;
-    }
-
+    void ObjectBase::SetTransformMatrix(const GTform &transformMatrix) noexcept { m_transformMatrix = transformMatrix; }
 
     bool ObjectBase::CloseEnough(const double f1, const double f2) noexcept { return std::fabs(f1 - f2) < EPSILON; }
 }  // namespace qbRT

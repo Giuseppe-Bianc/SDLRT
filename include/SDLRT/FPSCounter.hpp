@@ -4,8 +4,7 @@
 // NOLINTBEGIN(*-include-cleaner)
 #pragma once
 
-#include "headers.hpp"
-#include <SDL3/SDL.h>
+#include "headersSDL.hpp"
 class FPSCounter {
 public:
     explicit FPSCounter(SDL_Window *window, std::string_view title) noexcept;

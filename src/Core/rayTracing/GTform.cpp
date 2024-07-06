@@ -5,26 +5,20 @@
 #include "SDLRT/rayTracing/GTform.hpp"
 
 namespace qbRT {
-    GTform::GTform(const glm::dmat4 &fwd, const glm::dmat4 &bck) {
-        m_fwdtfm = fwd;
-        LINFO("consttructor  fwdtr {}", fwd);
-        m_bcktfm = bck;
-    }
 
     void GTform::SetTransform(const glm::dvec3 &translation, const glm::dvec3 &rotation, const glm::dvec3 &scale) {
         // Define matrices for translation, rotation, and scale using GLM functions.
-        glm::dmat4 translationMatrix = glm::translate(glm::dmat4(1.0), translation);
-        glm::dmat4 rotationMatrixX = glm::rotate(glm::dmat4(1.0), rotation.x, glm::dvec3(1.0, 0.0, 0.0));
-        glm::dmat4 rotationMatrixY = glm::rotate(glm::dmat4(1.0), rotation.y, glm::dvec3(0.0, 1.0, 0.0));
-        glm::dmat4 rotationMatrixZ = glm::rotate(glm::dmat4(1.0), rotation.z, glm::dvec3(0.0, 0.0, 1.0));
-        glm::dmat4 scaleMatrix = glm::scale(glm::dmat4(1.0), scale);
+        const glm::dmat4 translationMatrix = glm::translate(glm::dmat4(1.0), translation);
+        const glm::dmat4 rotationMatrixX = glm::rotate(glm::dmat4(1.0), rotation.x, glm::dvec3(1.0, 0.0, 0.0));
+        const glm::dmat4 rotationMatrixY = glm::rotate(glm::dmat4(1.0), rotation.y, glm::dvec3(0.0, 1.0, 0.0));
+        const glm::dmat4 rotationMatrixZ = glm::rotate(glm::dmat4(1.0), rotation.z, glm::dvec3(0.0, 0.0, 1.0));
+        const glm::dmat4 scaleMatrix = glm::scale(glm::dmat4(1.0), scale);
         // Combine to give the final forward transform matrix.
         m_fwdtfm = translationMatrix * rotationMatrixZ * rotationMatrixY * rotationMatrixX * scaleMatrix;
-        //std::swap(m_fwdtfm[0][3], m_fwdtfm[3][0]);
-        // Combine to give the final forward transform matrix.
+        // std::swap(m_fwdtfm[0][3], m_fwdtfm[3][0]);
+        //  Combine to give the final forward transform matrix.
         m_bcktfm = glm::inverse(m_fwdtfm);
     }
-
 
     Ray GTform::Apply(const qbRT::Ray &inputRay, bool dirFlag) const {
         // Create an output object.
@@ -47,10 +41,10 @@ namespace qbRT {
 
     glm::dvec3 GTform::Apply(const glm::dvec3 &inputVector, bool dirFlag) const {
         // Convert inputVector to a 4-element vector.
-        glm::dvec4 tempVector{inputVector[0], inputVector[1], inputVector[2], 1.0};
+        const glm::dvec4 tempVector{inputVector[0], inputVector[1], inputVector[2], 1.0};
 
         // Create a vector for the result.
-        glm::dvec4 resultVector;
+        glm::dvec4 resultVector{};
 
         if(dirFlag) {
             // Apply the forward transform.
@@ -79,7 +73,7 @@ namespace qbRT {
     }
 }  // namespace qbRT
 namespace qbRT {
-    GTform &GTform::operator=(const GTform &rhs) {
+    GTform &GTform::operator=(const GTform &rhs) noexcept {
         // Make sure that we're not assigning to ourself.
         if(this != &rhs) {
             m_fwdtfm = rhs.m_fwdtfm;
@@ -89,7 +83,7 @@ namespace qbRT {
         return *this;
     }
 
-    void GTform::PrintMatrix(bool dirFlag) {
+    void GTform::PrintMatrix(bool dirFlag) const {
         if(dirFlag) {
             LINFO(m_fwdtfm);
         } else {

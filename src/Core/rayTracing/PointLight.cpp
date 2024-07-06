@@ -1,7 +1,7 @@
 //
 // Created by gbian on 04/07/2024.
 //
-
+// NOLINTBEGIN(*-include-cleaner)
 #include "SDLRT/rayTracing//PointLight.hpp"
 DISABLE_WARNINGS_PUSH(26447)
 namespace qbRT {
@@ -14,8 +14,8 @@ namespace qbRT {
                                          [[maybe_unused]] const std::shared_ptr<ObjectBase> &currentObject, SDL_Color &color,
                                          double &intensity) noexcept {
         const auto lightDir = glm::normalize(m_location - intPoint);
-        const glm::dvec3 startPoint = intPoint;
-        double angle = std::acos(glm::dot(localNormal, lightDir));
+        [[maybe_unused]] const glm::dvec3 startPoint = intPoint;
+        const double angle = std::acos(glm::dot(localNormal, lightDir));
         if(angle > HALF_PID) {
             color = m_color;
             intensity = 0.0;
@@ -30,3 +30,4 @@ namespace qbRT {
 }  // namespace qbRT
 
 DISABLE_WARNINGS_POP()
+// NOLINTEND(*-include-cleaner)

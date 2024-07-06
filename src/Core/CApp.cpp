@@ -81,7 +81,7 @@ void CApp::OnEvent(const SDL_Event *event) noexcept {
 
 void CApp::OnLoop() noexcept {}
 
-void CApp::OnRender() {
+void CApp::OnRender() noexcept {
     // Set the background colour to white.
     SDL_SetRenderDrawColor(pRenderer, 255, 255, 255, 255);
     SDL_RenderClear(pRenderer);

@@ -1,17 +1,15 @@
 //
 // Created by gbian on 03/07/2024.
 //
-
+// NOLINTBEGIN(*-include-cleaner)
 #include "SDLRT/rayTracing/Camera.hpp"
 
 namespace qbRT {
-    Camera::Camera() noexcept {  // The default constructor.
+    // The default constructor.
+    Camera::Camera() noexcept : m_cameraLength(1.0) , m_cameraHorzSize(1.0) , m_cameraAspectRatio(1.0){
         m_cameraPosition = glm::dvec3{0.0, -10.0, 0.0};
         m_cameraLookAt = glm::dvec3{0.0, 0.0, 0.0};
         m_cameraUp = glm::dvec3{0.0, 0.0, 1.0};
-        m_cameraLength = 1.0;
-        m_cameraHorzSize = 1.0;
-        m_cameraAspectRatio = 1.0;
     }
     void Camera::SetPosition(const glm::dvec3 &newPosition) noexcept { m_cameraPosition = newPosition; }
 
@@ -26,26 +24,26 @@ namespace qbRT {
     void Camera::SetAspect(double newAspect) noexcept { m_cameraAspectRatio = newAspect; }
 
     // Method to return the position of the camera.
-    glm::dvec3 Camera::GetPosition() noexcept { return m_cameraPosition; }
+    glm::dvec3 Camera::GetPosition() const noexcept { return m_cameraPosition; }
 
     // Method to return the look at of the camera.
-    glm::dvec3 Camera::GetLookAt() noexcept { return m_cameraLookAt; }
+    glm::dvec3 Camera::GetLookAt() const noexcept { return m_cameraLookAt; }
 
     // Method to return the up vector of the camera.
-    glm::dvec3 Camera::GetUp() noexcept { return m_cameraUp; }
+    glm::dvec3 Camera::GetUp() const noexcept { return m_cameraUp; }
 
     // Method to return the length of the camera.
-    double Camera::GetLength() noexcept { return m_cameraLength; }
+    double Camera::GetLength() const noexcept { return m_cameraLength; }
 
-    double Camera::GetHorzSize() noexcept { return m_cameraHorzSize; }
+    double Camera::GetHorzSize() const noexcept { return m_cameraHorzSize; }
 
-    double Camera::GetAspect() noexcept { return m_cameraAspectRatio; }
+    double Camera::GetAspect() const noexcept { return m_cameraAspectRatio; }
 
-    glm::dvec3 Camera::GetU() noexcept { return m_projectionScreenU; }
+    glm::dvec3 Camera::GetU() const noexcept { return m_projectionScreenU; }
 
-    glm::dvec3 Camera::GetV() noexcept { return m_projectionScreenV; }
+    glm::dvec3 Camera::GetV() const noexcept { return m_projectionScreenV; }
 
-    glm::dvec3 Camera::GetScreenCentre() noexcept { return m_projectionScreenCentre; }
+    glm::dvec3 Camera::GetScreenCentre() const noexcept { return m_projectionScreenCentre; }
 
     void Camera::UpdateCameraGeometry() {
         // First, compute the vector from the camera position to the LookAt position.
@@ -76,3 +74,4 @@ namespace qbRT {
         return true;
     }
 }  // namespace qbRT
+// NOLINTEND(*-include-cleaner)

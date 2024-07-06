@@ -46,11 +46,11 @@ namespace qbRT {
         m_lightList.at(0)->m_location = glm::dvec3{5.0, -10.0, 5.0};
         m_lightList.at(0)->m_color = SDL_COLOR(255.0, 255.0, 255.0);
     }
-    void updateDistances(double dist, double& maxDist, double& minDist) {
+    void updateDistances(double dist, double &maxDist, double &minDist) noexcept {
         maxDist = std::max(maxDist, dist);
         minDist = std::min(minDist, dist);
     }
-    bool Scene::Render(qbImage &outputImage) {
+    bool Scene::Render(qbImage &outputImage) const {
         // Get the dimensions of the output image.
         // SDL_Color color{0, 0, 0, 255};
         const auto xSize = outputImage.GetXSize();
@@ -100,8 +100,7 @@ namespace qbRT {
 
                         // outputImage.SetPixel(x, y, 255.0 - ((dist - 9.0) / 0.94605) * 255.0, 0.0, 0.0)
                         if(validIllum) {
-                            outputImage.SetPixel(x, y,
-                                                 SDL_COLOR(localColor.r * intensity, localColor.g * intensity, localColor.b * intensity));
+                            outputImage.SetPixel(x, y, SDL_COLORM(localColor, intensity));
                         } else {
                             // outputImage.SetPixel(x, y, localColor.r * intensity, localColor.g * intensity, localColor.b * intensity);
                         }
@@ -113,13 +112,9 @@ namespace qbRT {
         }
         LINFO("{}", timer);
 
-        auto screenCentre = m_camera.GetScreenCentre();
-        auto screenU = m_camera.GetU();
-        auto screenV = m_camera.GetV();
-
         // And display to the terminal.
-        LINFO("\nCamera screen centre: {}\nCamera U vector: {}\nCamera V vector: {}", screenCentre, screenU, screenV);
-        LINFO("\nMinimum distance: {}\nMaximum distance: {}", minDist, maxDist);
+        LINFO("Minimum distance: {}", minDist);
+        LINFO("Maximum distance: {}", maxDist);
 
         return true;
     }
