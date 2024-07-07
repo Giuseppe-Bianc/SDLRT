@@ -46,16 +46,20 @@ namespace qbRT {
         m_lightList.at(0)->m_location = {5.0, -10.0, 5.0};
         m_lightList.at(0)->m_color = SDL_COLOR(255.0, 255.0, 255.0);
     }
-    void updateDistances(double dist, double &maxDist, double &minDist) noexcept {
+    void updateDistances(long double dist, long double &maxDist, long double &minDist) noexcept {
         maxDist = std::max(maxDist, dist);
         minDist = std::min(minDist, dist);
     }
     bool Scene::Render(qbImage &outputImage) const {
         // Get the dimensions of the output image.
-        const auto xSize = outputImage.GetXSize();
-        const auto ySize = outputImage.GetYSize();
+        vnd::Timer timerd{"scene.Render::data"};
+        const auto xSize = C_ST(outputImage.GetXSize());
+        const auto ySize = C_ST(outputImage.GetYSize());
         const auto halfXSise = C_D(xSize) / 2.0;
         const auto halfYSise = C_D(ySize) / 2.0;
+        const auto xrange = std::views::iota(C_ST(0), xSize);
+        const auto yrange = std::views::iota(C_ST(0), ySize);
+        LINFO("{}", timerd);
 
         // Loop over each pixel in our image.
         Ray cameraRay;
@@ -66,16 +70,16 @@ namespace qbRT {
         const double xFact = 1.0 / halfXSise;
         const double yFact = 1.0 / halfYSise;
         double intensity = 0.0;
-        double minDist = 1e6;
-        double maxDist = 0.0;
+        long double minDist = 1e6;
+        long double maxDist = 0.0;
+        long double dist = 0;
         double normX = 0;
         double normY = 0;
-        double dist = 0;
         vnd::Timer timer{"scene.Render"};
         bool validInt{};
-        for(const auto &x : std::views::iota(0, xSize)) {
+        for(const auto &x : xrange) {
             normX = (C_D(x) * xFact) - 1.0;
-            for(const auto &y : std::views::iota(0, ySize)) {
+            for(const auto &y : yrange) {
                 // Normalize the x and y coordinates.
                 normY = (C_D(y) * yFact) - 1.0;
 

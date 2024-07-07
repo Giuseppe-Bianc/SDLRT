@@ -22,7 +22,7 @@ public:
     void Initialize(const int xSize, const int ySize, SDL_Renderer *pRenderer);
 
     // Function to set pixels.
-    void SetPixel(const int x, const int y, const SDL_Color &color);
+    void SetPixel(const std::size_t x, const size_t y, const SDL_Color &color) noexcept;
     [[nodiscard]] std::vector<SDL_Color> ArrangePixels() const;
 
     // Function to return the image for display.
@@ -45,8 +45,8 @@ private:
     SDL_FRect srcRect{};
     SDL_FRect bounds{};
     std::size_t m_bufferSize = 0;
-    std::ranges::iota_view<int, int> xRange;
-    std::ranges::iota_view<int, int> yRange;
+    std::ranges::iota_view<std::size_t, std::size_t> xRange;
+    std::ranges::iota_view<std::size_t, std::size_t> yRange;
 
     // SDL2 stuff.
     SDL_Renderer *m_pRenderer{nullptr};

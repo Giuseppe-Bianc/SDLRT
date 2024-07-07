@@ -9,11 +9,11 @@ DISABLE_WARNINGS_PUSH(6022 26446 26447)
 // Function to initialize.
 void qbImage::Initialize(const int xSize, const int ySize, SDL_Renderer *pRenderer) {
     vnd::Timer timer{"init qbimage"};
-    m_colorData.resize(xSize, std::vector<SDL_Color>(ySize, SDL_COLOR(0.0, 0.0, 0.0)));
+    m_colorData.resize(xSize, std::vector<SDL_Color>(ySize, SDL_COLOR_BLACK()));
     m_xSize = xSize;
     m_ySize = ySize;
-    xRange = std::views::iota(0, xSize);
-    yRange = std::views::iota(0, ySize);
+    xRange = std::views::iota(C_ST(0), C_ST(xSize));
+    yRange = std::views::iota(C_ST(0), C_ST(ySize));
     totalSize = xSize * ySize;
     m_bufferSize = xSize * TypeSizes::sizeOfSDL_Color;
     // Store the pointer to the renderer.
@@ -27,25 +27,19 @@ void qbImage::Initialize(const int xSize, const int ySize, SDL_Renderer *pRender
 }
 
 // Function to set pixels.
-void qbImage::SetPixel(const int x, const int y, const SDL_Color &color) { m_colorData.at(x).at(y) = color; }
+void qbImage::SetPixel(const std::size_t x, const size_t y, const SDL_Color &color) noexcept { m_colorData[x][y] = color; }
 
 std::vector<SDL_Color> qbImage::ArrangePixels() const {
     vnd::Timer timer{"qbimage::ArrangePixels"};
-    std::vector<SDL_Color> tempPixels(C_ST(totalSize), SDL_COLOR(0.0, 0.0, 0.0));
-    std::size_t index{};
+    std::vector<SDL_Color> tempPixels(C_ST(totalSize), SDL_COLOR_BLACK());
     for(const auto &x : xRange) {
-        for(const auto &y : yRange) {
-            index = C_ST((C_ST(y) * m_xSize) + x);
-            tempPixels[index] = m_colorData[x][y];
-        }
+        for(const auto &y : yRange) { tempPixels[y * C_ST(m_xSize) + x] = m_colorData[x][y]; }
     }
     LINFO("{}", timer);
     return tempPixels;
 }
 
 void qbImage::Display(const std::vector<SDL_Color> &colorData) const noexcept {
-    // Allocate memory for a pixel buffer.
-
     // Update the texture with the pixel buffer.
     SDL_UpdateTexture(m_pTexture, nullptr, colorData.data(), C_I(m_bufferSize));
 
@@ -53,7 +47,7 @@ void qbImage::Display(const std::vector<SDL_Color> &colorData) const noexcept {
 }
 
 void qbImage::InitTexture() noexcept {
-    const vnd::AutoTimer timer{"init init qbimage::texture"};
+    const vnd::AutoTimer timer{"init qbimage::texture"};
     // Delete any previously created texture.
     if(m_pTexture != nullptr) [[unlikely]] { SDL_DestroyTexture(m_pTexture); }
     // Create the texture that will store the image.
