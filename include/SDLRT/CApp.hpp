@@ -17,7 +17,7 @@ public:
     int OnExecute();
     bool OnInit();
     void OnEvent(const SDL_Event *event) noexcept;
-    void OnLoop() noexcept;
+    void OnLoop() const noexcept;
     void OnRender() noexcept;
     void OnExit();
 

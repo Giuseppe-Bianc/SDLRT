@@ -8,7 +8,7 @@ CApp::CApp() noexcept : isRunning(true), pWindow(nullptr), pRenderer(nullptr) {}
 
 bool CApp::OnInit() {
     vnd::Timer inittimer("init SDL");
-    if(SDL_Init(SDL_INIT_VIDEO) < 0) {
+    if(SDL_Init(SDL_INIT_VIDEO) < 0) [[unlikely]] {
         LERROR("SDL_Init Error: {}", SDL_GetError());
         return false;
     }
@@ -23,7 +23,7 @@ bool CApp::OnInit() {
         vnd::Timer initrtimer("init SDL_Renderer");
         pRenderer = SDL_CreateRenderer(pWindow, nullptr);
         LINFO("{}", initrtimer);
-        if(pRenderer == nullptr) {
+        if(pRenderer == nullptr) [[unlikely]] {
             LERROR("SDL_CreateRenderer Error: {}", SDL_GetError());
             SDL_DestroyWindow(pWindow);
             SDL_Quit();
@@ -36,7 +36,7 @@ bool CApp::OnInit() {
         m_scene.Render(m_image);
 
         m_pixels = m_image.ArrangePixels();
-    } else {
+    } else [[unlikely]] {
         LERROR("SDL_CreateWindow Error: {}", SDL_GetError());
         return false;
     }
@@ -79,7 +79,7 @@ void CApp::OnEvent(const SDL_Event *event) noexcept {
     }
 }
 
-void CApp::OnLoop() noexcept {}
+void CApp::OnLoop() const noexcept {}
 
 void CApp::OnRender() noexcept {
     // Set the background colour to white.
@@ -96,11 +96,11 @@ void CApp::OnRender() noexcept {
 void CApp::OnExit() {
     vnd::AutoTimer timer{"OnExit"};
     // Tidy up SDL2 stuff.
-    if(pRenderer != nullptr) {
+    if(pRenderer != nullptr) [[likely]] {
         SDL_DestroyRenderer(pRenderer);
         pRenderer = nullptr;
     }
-    if(pWindow != nullptr) {
+    if(pWindow != nullptr) [[likely]] {
         SDL_DestroyWindow(pWindow);
         pWindow = nullptr;
     }

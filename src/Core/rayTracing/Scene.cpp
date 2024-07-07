@@ -102,7 +102,7 @@ namespace qbRT {
                         updateDistances(dist, maxDist, minDist);
 
                         // outputImage.SetPixel(x, y, 255.0 - ((dist - 9.0) / 0.94605) * 255.0, 0.0, 0.0)
-                        if(validIllum) {
+                        if(validIllum) [[likely]] {
                             outputImage.SetPixel(x, y, SDL_COLORM(localColor, intensity));
                         } else {
                             // outputImage.SetPixel(x, y, localColor.r * intensity, localColor.g * intensity, localColor.b * intensity);
