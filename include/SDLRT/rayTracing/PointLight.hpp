@@ -14,7 +14,7 @@ namespace qbRT {
         virtual ~PointLight() override = default;
         virtual bool ComputeIllumination(const glm::dvec3 &intPoint, const glm::dvec3 &localNormal,
                                          const std::vector<std::shared_ptr<ObjectBase>> &objectList,
-                                         const std::shared_ptr<ObjectBase> &currentObject, SDL_Color &color,
+                                         const std::shared_ptr<ObjectBase> &currentObject, glm::dvec3 &color,
                                          double &intensity) noexcept override;
     };
 

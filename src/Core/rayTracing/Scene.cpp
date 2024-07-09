@@ -15,36 +15,52 @@ namespace qbRT {
 
     Scene::Scene() noexcept {
         // Configure the camera.
-        m_camera.SetPosition({0.0, -10.0, 0.0});
+        vnd::Timer ctimer{"scene set camera"};
+        m_camera.SetPosition({0.0, -10.0, -2.0});
         m_camera.SetLookAt({0.0, 0.0, 0.0});
         m_camera.SetUp({0.0, 0.0, 1.0});
         m_camera.SetHorzSize(0.25);
         m_camera.SetAspect(16.0 / 9.0);
         m_camera.UpdateCameraGeometry();
-        // Get the screen centre and U,V vectors and display.
-        m_objectList.emplace_back(MAKE_SHARED(ObjSphere, ObjSphere{}));
-        // Construct a test sphere.
-        m_objectList.emplace_back(MAKE_SHARED(ObjSphere, ObjSphere{}));
-        m_objectList.emplace_back(MAKE_SHARED(ObjSphere, ObjSphere{}));
-        // m_objectList.push_back(std::make_shared<qbRT::ObjSphere>(qbRT::ObjSphere()));
+        LINFO("{}", ctimer);
+        const vnd::AutoTimer timer{"scene set word data"};  // Construct a test sphere.
+        // Construct a test plane and spheres.
+        m_objectList.emplace_back(MAKE_SHARED(ObjSphere, ObjSphere()));
+        m_objectList.emplace_back(MAKE_SHARED(ObjSphere, ObjSphere()));
+        m_objectList.emplace_back(MAKE_SHARED(ObjSphere, ObjSphere()));
+        m_objectList.emplace_back(MAKE_SHARED(ObjPlane, ObjPlane()));
 
-        // Modify the spheres.
-        GTform testMatrix1, testMatrix2, testMatrix3;
+        // Define a transform for the plane, .
+        GTform planeMatrix, testMatrix1, testMatrix2, testMatrix3;
         testMatrix1.SetTransform({-1.5, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.5, 0.5, 0.75});
 
         testMatrix2.SetTransform({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.75, 0.5, 0.5});
 
-        testMatrix3.SetTransform({1.5, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.65, 0.65, 0.65});
+        testMatrix3.SetTransform({1.5, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.75, 0.75, 0.75});
 
+        planeMatrix.SetTransform({0.0, 0.0, 0.75}, {0.0, 0.0, 0.0}, {4.0, 4.0, 1.0});
         m_objectList.at(0)->SetTransformMatrix(testMatrix1);
         m_objectList.at(1)->SetTransformMatrix(testMatrix2);
         m_objectList.at(2)->SetTransformMatrix(testMatrix3);
-        m_objectList.at(0)->m_baseColor = SDL_COLOR(64.0, 128.0, 200.0);
-        m_objectList.at(1)->m_baseColor = SDL_COLOR(255.0, 128.0, 0.0);
-        m_objectList.at(2)->m_baseColor = SDL_COLOR(255.0, 200.0, 0.0);
-        m_lightList.push_back(MAKE_SHARED(PointLight, PointLight()));
-        m_lightList.at(0)->m_location = {5.0, -10.0, 5.0};
-        m_lightList.at(0)->m_color = SDL_COLOR(255.0, 255.0, 255.0);
+        m_objectList.at(3)->SetTransformMatrix(planeMatrix);
+
+        m_objectList.at(0)->m_baseColor = {0.25, 0.5, 0.8};
+        m_objectList.at(1)->m_baseColor = {1.0, 0.5, 0.0};
+        m_objectList.at(2)->m_baseColor = {1.0, 0.8, 0.0};
+        m_objectList.at(3)->m_baseColor = {0.5, 0.5, 0.5};
+
+        // Construct a test light.
+        m_lightList.emplace_back(MAKE_SHARED(PointLight, PointLight()));
+        m_lightList.at(0)->m_location = {5.0, -10.0, -5.0};
+        m_lightList.at(0)->m_color = {0.0, 0.0, 1.0};
+
+        m_lightList.emplace_back(MAKE_SHARED(PointLight, PointLight()));
+        m_lightList.at(1)->m_location = {-5.0, -10.0, -5.0};
+        m_lightList.at(1)->m_color = {1.0, 0.0, 0.0};
+
+        m_lightList.emplace_back(MAKE_SHARED(PointLight, PointLight()));
+        m_lightList.at(2)->m_location = {0.0, -10.0, -5.0};
+        m_lightList.at(2)->m_color = {0.0, 1.0, 0.0};
     }
     void updateDistances(long double dist, long double &maxDist, long double &minDist) noexcept {
         maxDist = std::max(maxDist, dist);
@@ -65,12 +81,12 @@ namespace qbRT {
         Ray cameraRay;
         glm::dvec3 intPoint{0.0};
         glm::dvec3 localNormal{0.0};
-        SDL_Color localColor = SDL_COLOR(0.0, 0.0, 0.0);
-        SDL_Color color = SDL_COLOR(0.0, 0.0, 0.0);
+        glm::dvec3 localColor = {0.0, 0.0, 0.0};
+        glm::dvec3 color = {0.0, 0.0, 0.0};
         const double xFact = 1.0 / halfXSise;
         const double yFact = 1.0 / halfYSise;
-        double intensity = 0.0;
-        long double minDist = 1e6;
+        [[maybe_unused]] double intensity = 0.0;
+        long double minDist2 = 1e6;
         long double maxDist = 0.0;
         long double dist = 0;
         double normX = 0;
@@ -86,29 +102,53 @@ namespace qbRT {
                 // Generate the ray for this pixel.
                 m_camera.GenerateRay(normX, normY, cameraRay);
 
+                std::shared_ptr<ObjectBase> closestObject;
+                glm::dvec3 closestIntPoint{};
+                glm::dvec3 closestLocalNormal{};
+                glm::dvec3 closestLocalColor{};
+                long double minDist = 1e6L;
+                bool intersectionFound = false;
+
                 for(const auto &currentObject : m_objectList) {
                     validInt = currentObject->TestIntersection(cameraRay, intPoint, localNormal, localColor);
                     // If we have a valid intersection, change pixel color to red.
                     if(validInt) {
-                        // Compute intensity of illumination.
-                        bool validIllum = false;
-                        for(const auto &currentLight : m_lightList) {
-                            validIllum = currentLight->ComputeIllumination(intPoint, localNormal, m_objectList, currentObject, color,
-                                                                           intensity);
-                        }
-
-                        // Compute the distance between the camera and the point of intersection.
+                        intersectionFound = true;
                         dist = glm::distance(intPoint, cameraRay.m_point1);
-                        updateDistances(dist, maxDist, minDist);
-
-                        // outputImage.SetPixel(x, y, 255.0 - ((dist - 9.0) / 0.94605) * 255.0, 0.0, 0.0)
-                        if(validIllum) [[likely]] {
-                            outputImage.SetPixel(x, y, SDL_COLORM(localColor, intensity));
-                        } else {
-                            // outputImage.SetPixel(x, y, localColor.r * intensity, localColor.g * intensity, localColor.b * intensity);
+                        updateDistances(dist, maxDist, minDist2);
+                        if(dist < minDist) {
+                            minDist = dist;
+                            closestObject = currentObject;
+                            closestIntPoint = intPoint;
+                            closestLocalNormal = localNormal;
+                            closestLocalColor = localColor;
                         }
-                    } else {
-                        // outputImage.SetPixel(x, y, SDL_COLOR(0.0, 0.0, 0.0));
+                    }
+                }
+                if(intersectionFound) {
+                    // Compute the intensity of illuminatio
+                    double red = 0.0;
+                    double green = 0.0;
+                    double blue = 0.0;
+                    bool validIllum = false;
+                    bool illumFound = false;
+                    for(auto currentLight : m_lightList) {
+                        validIllum = currentLight->ComputeIllumination(closestIntPoint, closestLocalNormal, m_objectList, closestObject,
+                                                                       color, intensity);
+
+                        if(validIllum) {
+                            illumFound = true;
+                            red += color[0] * intensity;
+                            green += color[1] * intensity;
+                            blue += color[2] * intensity;
+                        }
+                    }
+
+                    if(illumFound) {
+                        red *= closestLocalColor[0];
+                        green *= closestLocalColor[1];
+                        blue *= closestLocalColor[2];
+                        outputImage.SetPixel(x, y, red, green, blue);
                     }
                 }
             }
@@ -116,7 +156,7 @@ namespace qbRT {
         LINFO("{}", timer);
 
         // And display to the terminal.
-        LINFO("Minimum distance: {}", minDist);
+        LINFO("Minimum distance: {}", minDist2);
         LINFO("Maximum distance: {}", maxDist);
 
         return true;

@@ -133,11 +133,10 @@ private:
 
 // add more formatting capabilitis like gray scale and full HSL representation
 
-namespace TypeSizes {
+/*namespace TypeSizes {
     /// Size of a boolean type.
     static inline constexpr std::size_t sizeOfSDL_Color = sizeof(SDL_Color);
 }  // namespace TypeSizes
-
 constexpr SDL_Color SDL_COLOR_BLACK() noexcept { return {0, 0, 0, ALPHA_VALUE}; }
 
 inline SDL_Color SDL_COLOR(const double r, const double g, const double b) noexcept {
@@ -170,5 +169,6 @@ constexpr SDL_Color SDL_COLORM(const SDL_Color &color, double intensity) noexcep
     return {NC_UI8T(color.r * intensity), NC_UI8T(color.g * intensity), NC_UI8T(color.b * intensity), ALPHA_VALUE};
 }
 
+*/
 DISABLE_WARNINGS_POP()
 // NOLINTEND(*-include-cleaner)

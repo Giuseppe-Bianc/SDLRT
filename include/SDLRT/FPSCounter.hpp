@@ -16,8 +16,8 @@ public:
 
 private:
     [[nodiscard]] std::string transformTime(long double inputTimeMilli) const noexcept;
-    using clock = std::chrono::high_resolution_clock;
-    std::chrono::time_point<clock> last_time;
+    using clock = ch::high_resolution_clock;
+    ch::time_point<clock> last_time;
     int frames;
     long double fps;
     long double ms_per_frame;

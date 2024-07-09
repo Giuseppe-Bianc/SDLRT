@@ -62,6 +62,7 @@ DISABLE_WARNINGS_PUSH(
 DISABLE_WARNINGS_POP()
 
 namespace fs = std::filesystem;
+namespace ch = std::chrono;
 
 DISABLE_WARNINGS_PUSH(26481)
 static inline constexpr std::string_view wtile = "qbRayTracer";

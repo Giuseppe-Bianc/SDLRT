@@ -5,6 +5,8 @@
 #include "SDLRT/FPSCounter.hpp"
 #include "SDLRT/timer/TimeStep.hpp"
 
+DISABLE_WARNINGS_PUSH(26447)
+
 FPSCounter::FPSCounter(SDL_Window *window, std::string_view title) noexcept
   : last_time(clock::now()), frames(0), fps(0.0L), ms_per_frame(0.0L), m_window(window), m_title(title) {}
 
@@ -46,4 +48,6 @@ void FPSCounter::updateFPS() noexcept {
 long double FPSCounter::getFPS() const noexcept { return fps; }
 
 long double FPSCounter::getMsPerFrame() const noexcept { return ms_per_frame; }
+
+DISABLE_WARNINGS_POP()
 // NOLINTEND(*-include-cleaner)

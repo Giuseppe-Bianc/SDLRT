@@ -1,7 +1,7 @@
 //
 // Created by gbian on 06/06/2024.
 //
-
+// NOLINTBEGIN(*-easily-swappable-parameters)
 #pragma once
 
 #include "timeFactors.hpp"
@@ -11,7 +11,8 @@ DISABLE_WARNINGS_PUSH(26447 26481)
 namespace vnd {
     class TimeValues {
     public:
-        TimeValues() = default;
+        TimeValues() noexcept = default;
+        ~TimeValues() = default;
 
         explicit TimeValues(const long double nanoseconds_) noexcept
           : seconds(nanoseconds_ / SECONDSFACTOR), millis(nanoseconds_ / MILLISECONDSFACTOR), micro(nanoseconds_ / MICROSECONDSFACTOR),
@@ -40,6 +41,7 @@ namespace vnd {
     class ValueLable {
     public:
         ValueLable() noexcept = default;
+        ~ValueLable() = default;
         ValueLable(const long double time_val, const std::string_view time_label) noexcept : timeVal(time_val), timeLabel(time_label) {}
         ValueLable(const ValueLable &other) = default;
         ValueLable(ValueLable &&other) noexcept = default;
@@ -47,39 +49,33 @@ namespace vnd {
         ValueLable &operator=(ValueLable &&other) noexcept = default;
 
         [[nodiscard]] std::string transformTimeMicro(long double inputTimeMicro) const noexcept {
-            using namespace std::chrono;
+            const ch::duration<long double, std::micro> durationmicros(inputTimeMicro);
 
-            const duration<long double, std::micro> durationmicros(inputTimeMicro);
-
-            auto durationUs = duration_cast<microseconds>(durationmicros);
-            auto durationNs = duration_cast<nanoseconds>(durationmicros - durationUs);
+            const auto durationUs = ch::duration_cast<ch::microseconds>(durationmicros);
+            const auto durationNs = ch::duration_cast<ch::nanoseconds>(durationmicros - durationUs);
 
             return FORMAT("{}us,{}ns", C_LD(durationUs.count()), C_LD(durationNs.count()));
         }
 
         [[nodiscard]] std::string transformTimeMilli(long double inputTimeMilli) const noexcept {
-            using namespace std::chrono;
+            const ch::duration<long double, std::milli> durationmils(inputTimeMilli);
 
-            const duration<long double, std::milli> durationmils(inputTimeMilli);
-
-            auto durationMs = duration_cast<milliseconds>(durationmils);
-            auto durationUs = duration_cast<microseconds>(durationmils - durationMs);
-            auto durationNs = duration_cast<nanoseconds>(durationmils - durationMs - durationUs);
+            const auto durationMs = ch::duration_cast<ch::milliseconds>(durationmils);
+            const auto durationUs = ch::duration_cast<ch::microseconds>(durationmils - durationMs);
+            const auto durationNs = ch::duration_cast<ch::nanoseconds>(durationmils - durationMs - durationUs);
 
             return FORMAT("{}ms,{}us,{}ns", C_LD(durationMs.count()), C_LD(durationUs.count()), C_LD(durationNs.count()));
         }
 
         [[nodiscard]] std::string transformTimeSeconds(long double inputTimeSeconds) const noexcept {
-            using namespace std::chrono;
+            const ch::duration<long double> durationSecs(inputTimeSeconds);
 
-            const duration<long double> durationSecs(inputTimeSeconds);
+            const auto durationSc = ch::duration_cast<ch::seconds>(durationSecs);
+            const auto durationMs = ch::duration_cast<ch::milliseconds>(durationSecs - durationSc);
+            const auto durationUs = ch::duration_cast<ch::microseconds>(durationSecs - durationSc - durationMs);
+            const auto durationNs = ch::duration_cast<ch::nanoseconds>(durationSecs - durationSc - durationMs - durationUs);
 
-            auto durationSec = duration_cast<seconds>(durationSecs);
-            auto durationMs = duration_cast<milliseconds>(durationSecs - durationSec);
-            auto durationUs = duration_cast<microseconds>(durationSecs - durationSec - durationMs);
-            auto durationNs = duration_cast<nanoseconds>(durationSecs - durationSec - durationMs - durationUs);
-
-            return FORMAT("{}s,{}ms,{}us,{}ns", C_LD(durationSec.count()), C_LD(durationMs.count()), C_LD(durationUs.count()),
+            return FORMAT("{}s,{}ms,{}us,{}ns", C_LD(durationSc.count()), C_LD(durationMs.count()), C_LD(durationUs.count()),
                           C_LD(durationNs.count()));
         }
         [[nodiscard]] std::string toString() const noexcept {
@@ -96,8 +92,8 @@ namespace vnd {
 
     class Times {
     public:
-        Times() = default;
-
+        Times() noexcept = default;
+        ~Times() = default;
         explicit Times(const long double nanoseconds_) noexcept : values(nanoseconds_) {}
 
         explicit Times(const TimeValues &time_values) noexcept : values(time_values) {}
@@ -125,7 +121,7 @@ namespace vnd {
 
     private:
         // Campi della classe
-        TimeValues values{};
+        TimeValues values;
         std::string_view labelseconds{"s"};
         std::string_view labelmillis{"ms"};
         std::string_view labelmicro{"us"};
@@ -138,10 +134,13 @@ namespace vnd {
  * This function is a formatter for CodeSourceLocation using fmt.
  * \cond
  */
+
 // NOLINTNEXTLINE
 template <> struct fmt::formatter<vnd::ValueLable> : fmt::formatter<std::string_view> {
     template <typename FormatContext> auto format(const vnd::ValueLable &val, FormatContext &ctx) {
         return fmt::formatter<std::string_view>::format(val.toString(), ctx);
     }
 };
+
 /** \endcond */
+// NOLINTEND(*-easily-swappable-parameters)

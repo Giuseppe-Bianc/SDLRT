@@ -11,10 +11,11 @@ namespace qbRT {
     static inline constexpr double aa = 1.0;
     static inline constexpr double aad = aa * 2;
     static inline constexpr double aaq = 4 * aa;
+    static inline constexpr auto zvec = glm::dvec3{0.0, 0.0, 0.0};
 
     // NOLINTNEXTLINE(*-easily-swappable-parameters)
     bool ObjSphere::TestIntersection(const Ray &castRay, glm::dvec3 &intPoint, glm::dvec3 &localNormal,
-                                     [[maybe_unused]] SDL_Color &localColor) const noexcept {
+                                     [[maybe_unused]] glm::dvec3 &localColor) const noexcept {
         const Ray bckRay = m_transformMatrix.Apply(castRay, BCKTFORM);
         // Compute the values of a, b and c.
         const glm::dvec3 vhat = glm::normalize(bckRay.m_lab);
@@ -50,16 +51,15 @@ namespace qbRT {
                     intPoint = castRay.m_point1 + (vhat * t2);
                 }*/
                 // Calculate the intersection point based on the smaller t value
-                const double tMin = (t1 < t2) ? t1 : t2;
-                poi = bckRay.m_point1 + (vhat * tMin);
+                const double tMin = std::min(t1, t2);
+                poi = bckRay.m_point1 + vhat * tMin;
             }
             intPoint = m_transformMatrix.Apply(poi, FWDTFORM);
-            const glm::dvec3 newObjOrigin = m_transformMatrix.Apply(glm::dvec3{0.0, 0.0, 0.0}, qbRT::FWDTFORM);
+            const glm::dvec3 newObjOrigin = m_transformMatrix.Apply(zvec, qbRT::FWDTFORM);
             localNormal = glm::normalize(intPoint - newObjOrigin);
             localColor = m_baseColor;
             return true;
         } else {
-            // localColor = SDL_COLOR(0.0,0.0,0.0);
             return false;
         }
     }

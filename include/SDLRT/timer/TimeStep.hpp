@@ -13,7 +13,7 @@ public:
     explicit Timestep(float time = 0.0F) noexcept : m_Time(C_LD(time)) {}
     explicit Timestep(double time = 0.0) noexcept : m_Time(C_LD(time)) {}
     explicit Timestep(long double time = 0.0L) noexcept : m_Time(time) {}
-    explicit Timestep(const std::chrono::duration<long double> &time) noexcept : m_Time(time.count()) {}
+    explicit Timestep(const ch::duration<long double> &time) noexcept : m_Time(time.count()) {}
 
     explicit operator float() const noexcept { return C_F(m_Time); }
     explicit operator double() const noexcept { return C_D(m_Time); }

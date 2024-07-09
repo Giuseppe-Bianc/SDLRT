@@ -18,10 +18,10 @@ namespace qbRT {
         // Function to compute illumination contribution.
         virtual bool ComputeIllumination(const glm::dvec3 &intPoint, const glm::dvec3 &localNormal,
                                          const std::vector<std::shared_ptr<ObjectBase>> &objectList,
-                                         const std::shared_ptr<ObjectBase> &currentObject, SDL_Color &color, double &intensity) noexcept;
+                                         const std::shared_ptr<ObjectBase> &currentObject, glm::dvec3 &color, double &intensity) noexcept;
 
         // Public member variables.
-        SDL_Color m_color{};
+        glm::dvec3 m_color{};
         glm::dvec3 m_location{};
         double m_intensity = 0.0;
     };

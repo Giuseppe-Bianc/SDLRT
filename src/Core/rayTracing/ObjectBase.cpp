@@ -8,7 +8,7 @@ static inline constexpr auto EPSILON = 1e-21;
 
 namespace qbRT {
     bool ObjectBase::TestIntersection([[maybe_unused]] const Ray &castRay, [[maybe_unused]] glm::dvec3 &intPoint,
-                                      [[maybe_unused]] glm::dvec3 &localNormal, [[maybe_unused]] SDL_Color &localColor) const noexcept {
+                                      [[maybe_unused]] glm::dvec3 &localNormal, [[maybe_unused]] glm::dvec3 &localColor) const noexcept {
         return false;
     }
 

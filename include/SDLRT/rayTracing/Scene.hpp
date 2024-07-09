@@ -6,6 +6,7 @@
 
 #include "../timer/Timer.hpp"
 #include "Camera.hpp"
+#include "ObjPlane.hpp"
 #include "ObjSphere.hpp"
 #include "PointLight.hpp"
 #include "qbImage.hpp"

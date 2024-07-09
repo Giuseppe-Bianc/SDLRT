@@ -26,13 +26,13 @@ namespace vnd {
     class Timer {  // NOLINT(*-special-member-functions)
     protected:
         /// This is a typedef to make clocks easier to use
-        using clock = std::chrono::high_resolution_clock;
+        using clock = ch::high_resolution_clock;
         /// This typedef is for points in time
-        using time_point = std::chrono::time_point<clock>;
+        using time_point = ch::time_point<clock>;
 
         /// This is the type of a printing function, you can make your own
         using time_print_t = std::function<std::string(std::string, std::size_t, ValueLable)>;
-        using nanolld = std::chrono::duration<long double, std::nano>;
+        using nanolld = ch::duration<long double, std::nano>;
         /// This is the title of the timer
         std::string title_;
         std::size_t title_lenpadd;
