@@ -2,7 +2,7 @@
 // Created by gbian on 04/07/2024.
 //
 // NOLINTBEGIN(*-include-cleaner)
-#include "SDLRT/rayTracing//PointLight.hpp"
+#include "SDLRT/rayTracing/light/PointLight.hpp"
 DISABLE_WARNINGS_PUSH(26447)
 namespace qbRT {
     PointLight::PointLight() noexcept {

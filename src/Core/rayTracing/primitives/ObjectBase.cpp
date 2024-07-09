@@ -2,7 +2,7 @@
 // Created by gbian on 03/07/2024.
 //
 
-#include "SDLRT/rayTracing/ObjectBase.hpp"
+#include "SDLRT/rayTracing/primitives/ObjectBase.hpp"
 
 static inline constexpr auto EPSILON = 1e-21;
 

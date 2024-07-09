@@ -3,7 +3,7 @@
 //
 
 // NOLINTBEGIN(*-include-cleaner *-identifier-length))
-#include "SDLRT/rayTracing/ObjSphere.hpp"
+#include "SDLRT/rayTracing/primitives/ObjSphere.hpp"
 
 DISABLE_WARNINGS_PUSH(26447)
 

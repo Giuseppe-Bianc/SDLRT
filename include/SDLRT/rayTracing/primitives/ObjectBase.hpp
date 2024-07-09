@@ -3,8 +3,8 @@
 //
 // NOLINTBEGIN(*-include-cleaner)
 #pragma once
-#include "GTform.hpp"
-#include "Ray.hpp"
+#include "../GTform.hpp"
+#include "../Ray.hpp"
 
 namespace qbRT {
 

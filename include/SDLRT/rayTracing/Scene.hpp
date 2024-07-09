@@ -5,10 +5,10 @@
 #pragma once
 
 #include "../timer/Timer.hpp"
+#include "./light/PointLight.hpp"
+#include "./primitives/ObjPlane.hpp"
+#include "./primitives/ObjSphere.hpp"
 #include "Camera.hpp"
-#include "ObjPlane.hpp"
-#include "ObjSphere.hpp"
-#include "PointLight.hpp"
 #include "qbImage.hpp"
 namespace qbRT {
 

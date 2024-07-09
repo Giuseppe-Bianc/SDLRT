@@ -7,13 +7,12 @@ add_library(core sample_library.cpp
         rayTracing/Ray.cpp
         rayTracing/Scene.cpp
         rayTracing/Camera.cpp
-        rayTracing/ObjectBase.cpp
-        rayTracing/ObjSphere.cpp
-        rayTracing/LightBase.cpp
-        rayTracing/PointLight.cpp
+        rayTracing/primitives/ObjectBase.cpp
+        rayTracing/primitives/ObjSphere.cpp
+        rayTracing/light/LightBase.cpp
+        rayTracing/light/PointLight.cpp
         rayTracing/GTform.cpp
-        rayTracing/ObjPlane.cpp
-        ../../include/SDLRT/rayTracing/ObjPlane.hpp
+        rayTracing/primitives/ObjPlane.cpp
 )
 
 

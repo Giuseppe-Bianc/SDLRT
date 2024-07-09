@@ -2,7 +2,7 @@
 // Created by gbian on 06/07/2024.
 //
 
-#include "SDLRT/rayTracing/ObjPlane.hpp"
+#include "SDLRT/rayTracing/primitives/ObjPlane.hpp"
 
 DISABLE_WARNINGS_PUSH(26447)
 

@@ -2,7 +2,7 @@
 // Created by gbian on 04/07/2024.
 //
 
-#include "SDLRT/rayTracing/LightBase.hpp"
+#include "SDLRT/rayTracing/light/LightBase.hpp"
 DISABLE_WARNINGS_PUSH(4100)
 namespace qbRT {
     bool LightBase::ComputeIllumination(const glm::dvec3 &intPoint, const glm::dvec3 &localNormal,

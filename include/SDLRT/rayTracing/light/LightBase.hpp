@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include "ObjectBase.hpp"
-#include "Ray.hpp"
+#include "../primitives/ObjectBase.hpp"
+#include "../Ray.hpp"
 
 namespace qbRT {
 
