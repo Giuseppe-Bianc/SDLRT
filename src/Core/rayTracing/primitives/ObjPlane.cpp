@@ -12,7 +12,7 @@ namespace qbRT {
     bool ObjPlane::TestIntersection(const Ray &castRay, glm::dvec3 &intPoint, glm::dvec3 &localNormal,
                                     glm::dvec3 &localColor) const noexcept {
         // Copy the ray and apply the backwards transform.
-        Ray bckRay = m_transformMatrix.Apply(castRay, qbRT::BCKTFORM);
+        Ray bckRay = m_transformMatrix.Apply(castRay, BCKTFORM);
 
         // Copy the m_lab vector from bckRay and normalize it.
         auto k = glm::normalize(bckRay.m_lab);

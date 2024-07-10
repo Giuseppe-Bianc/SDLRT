@@ -4,12 +4,17 @@
 
 #include "SDLRT/rayTracing/primitives/ObjectBase.hpp"
 
-static inline constexpr auto EPSILON = 1e-21;
+static inline constexpr auto EPSILON = 1e-24;
 
 namespace qbRT {
     bool ObjectBase::TestIntersection([[maybe_unused]] const Ray &castRay, [[maybe_unused]] glm::dvec3 &intPoint,
                                       [[maybe_unused]] glm::dvec3 &localNormal, [[maybe_unused]] glm::dvec3 &localColor) const noexcept {
         return false;
+    }
+    bool ObjectBase::AssignMaterial(const std::shared_ptr<MaterialBase> &objectMaterial) noexcept {
+        m_pMaterial = objectMaterial;
+        m_hasMaterial = true;
+        return m_hasMaterial;
     }
 
     void ObjectBase::SetTransformMatrix(const GTform &transformMatrix) noexcept { m_transformMatrix = transformMatrix; }

@@ -1,7 +1,5 @@
 set(SOURCES
         main.cpp
-        ../Core/rayTracing/GTform.cpp
-        ../../include/SDLRT/rayTracing/GTform.hpp
 )
 
 add_executable(sdlrt ${SOURCES})

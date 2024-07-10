@@ -8,6 +8,10 @@
 
 namespace qbRT {
 
+    /* Forward-declare the material base class. This will be
+        overriden later. */
+    class MaterialBase;
+
     class ObjectBase {
     public:
         // Constructor and destructor.
@@ -21,10 +25,17 @@ namespace qbRT {
         // Function to test whether two floating-point numbers are close to being equal.
         bool CloseEnough(const double f1, const double f2) const noexcept;
 
+        // Function to assign a material.
+        bool AssignMaterial(const std::shared_ptr<MaterialBase> &objectMaterial) noexcept;
+
         // Public member variables.
         // The base colour of the object.
         glm::dvec3 m_baseColor{};
         GTform m_transformMatrix;
+
+        // A reference to the material assigned to this object.
+        std::shared_ptr<MaterialBase> m_pMaterial;
+        bool m_hasMaterial = false;
     };
 
 }  // namespace qbRT

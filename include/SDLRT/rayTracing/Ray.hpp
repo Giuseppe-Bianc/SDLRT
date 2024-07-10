@@ -9,7 +9,7 @@ namespace qbRT {
     class Ray {
     public:
         Ray() noexcept : m_point1{0.0, 0.0, 0.0}, m_point2{0.0, 0.0, 1.0}, m_lab{m_point2 - m_point1} {}
-        Ray(const glm::dvec3 &point1, const glm::dvec3 &point2);
+        Ray(const glm::dvec3 &point1, const glm::dvec3 &point2) noexcept;
 
         [[nodiscard]] glm::dvec3 GetPoint1() const noexcept;
         [[nodiscard]] glm::dvec3 GetPoint2() const noexcept;

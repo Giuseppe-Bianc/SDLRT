@@ -14,7 +14,7 @@ namespace qbRT {
                                          const std::shared_ptr<ObjectBase> &currentObject, glm::dvec3 &color, double &intensity) noexcept {
         const glm::dvec3 lightDir = glm::normalize(m_location - intPoint);
         const glm::dvec3 startPoint = intPoint;
-        const qbRT::Ray lightRay(startPoint, startPoint + lightDir);
+        const Ray lightRay(startPoint, startPoint + lightDir);
         glm::dvec3 poi{};
         glm::dvec3 poiNormal{};
         glm::dvec3 poiColor{};

@@ -22,7 +22,7 @@ namespace qbRT {
         m_bcktfm = glm::inverse(m_fwdtfm);
     }
 
-    Ray GTform::Apply(const qbRT::Ray &inputRay, bool dirFlag) const {
+    Ray GTform::Apply(const Ray &inputRay, bool dirFlag) const {
         // Create an output object.
         Ray outputRay;
 
@@ -60,7 +60,7 @@ namespace qbRT {
 }  // namespace qbRT
 
 namespace qbRT {
-    GTform operator*(const qbRT::GTform &lhs, const qbRT::GTform &rhs) {
+    GTform operator*(const GTform &lhs, const GTform &rhs) {
         // Form the product of the two forward transforms.
         const glm::dmat4 fwdResult = lhs.m_fwdtfm * rhs.m_fwdtfm;
 

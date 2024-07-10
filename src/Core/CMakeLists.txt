@@ -13,6 +13,8 @@ add_library(core sample_library.cpp
         rayTracing/light/PointLight.cpp
         rayTracing/GTform.cpp
         rayTracing/primitives/ObjPlane.cpp
+        rayTracing/materials/MaterialBase.cpp
+        rayTracing/materials/SimpleMaterial.cpp
 )
 
 

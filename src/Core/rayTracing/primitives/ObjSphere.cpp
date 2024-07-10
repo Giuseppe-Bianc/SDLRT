@@ -55,7 +55,7 @@ namespace qbRT {
                 poi = bckRay.m_point1 + vhat * tMin;
             }
             intPoint = m_transformMatrix.Apply(poi, FWDTFORM);
-            const glm::dvec3 newObjOrigin = m_transformMatrix.Apply(zvec, qbRT::FWDTFORM);
+            const glm::dvec3 newObjOrigin = m_transformMatrix.Apply(zvec, FWDTFORM);
             localNormal = glm::normalize(intPoint - newObjOrigin);
             localColor = m_baseColor;
             return true;
