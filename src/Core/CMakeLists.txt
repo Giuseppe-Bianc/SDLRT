@@ -49,7 +49,7 @@ target_link_libraries(core PUBLIC
 target_include_directories(core ${WARNING_GUARD} PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
         $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>)
 
-target_compile_features(core PUBLIC cxx_std_20)
+target_compile_features(core PUBLIC cxx_std_23)
 
 set_target_properties(
         core

@@ -134,8 +134,8 @@ namespace qbRT {
                                                                                     closestIntPoint, closestLocalNormal, cameraRay);
                         outputImage.SetPixel(x, y, color[0], color[1], color[2]);
                     } else {
-                        glm::dvec3 matColor = MaterialBase::ComputeDiffuseColor(
-                            m_objectList, m_lightList, closestObject, closestIntPoint, closestLocalNormal, closestObject->m_baseColor);
+                        glm::dvec3 matColor = MaterialBase::ComputeDiffuseColor(m_objectList, m_lightList, closestObject, closestIntPoint,
+                                                                                closestLocalNormal, closestObject->m_baseColor);
                         outputImage.SetPixel(x, y, matColor[0], matColor[1], matColor[2]);
                     }
                 }
@@ -149,7 +149,7 @@ namespace qbRT {
         glm::dvec3 intPoint{};
         glm::dvec3 localNormal{};
         glm::dvec3 localColor{};
-        double minDist = 1e8;
+        double minDist = MAXDBL;
         double dist{};
         bool validInt{};
         bool intersectionFound = false;

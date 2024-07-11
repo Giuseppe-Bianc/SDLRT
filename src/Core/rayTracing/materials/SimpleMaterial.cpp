@@ -1,15 +1,15 @@
 //
 // Created by gbian on 09/07/2024.
 //
-
+// NOLINTBEGIN(*-include-cleaner)
 #include "SDLRT/rayTracing/materials/SimpleMaterial.hpp"
 
 namespace qbRT {
     // Function to return the color.
     glm::dvec3 SimpleMaterial::ComputeColor(const std::vector<std::shared_ptr<ObjectBase>> &objectList,
-                                                  const std::vector<std::shared_ptr<LightBase>> &lightList,
-                                                  const std::shared_ptr<ObjectBase> &currentObject, const glm::dvec3 &intPoint,
-                                                  const glm::dvec3 &localNormal, const Ray &cameraRay) noexcept {
+                                            const std::vector<std::shared_ptr<LightBase>> &lightList,
+                                            const std::shared_ptr<ObjectBase> &currentObject, const glm::dvec3 &intPoint,
+                                            const glm::dvec3 &localNormal, const Ray &cameraRay) noexcept {
         // Define the initial material colors.
         glm::dvec3 matColor{};
         glm::dvec3 refColor{};
@@ -25,7 +25,8 @@ namespace qbRT {
         }
 
         // Combine reflection and diffuse components.
-        matColor = (refColor * m_reflectivity) + (difColor * (1 - m_reflectivity));
+        // matColor = (refColor * m_reflectivity) + (difColor * (1 - m_reflectivity));
+        matColor = glm::mix(difColor, refColor, m_reflectivity);
 
         // Compute the specular component.
         if(m_shininess > 0.0) { spcColor = ComputeSpecular(objectList, lightList, intPoint, localNormal, cameraRay); }
@@ -40,9 +41,8 @@ namespace qbRT {
 
     // Function to compute the specular highlights.
     glm::dvec3 SimpleMaterial::ComputeSpecular(const std::vector<std::shared_ptr<ObjectBase>> &objectList,
-                                                     const std::vector<std::shared_ptr<LightBase>> &lightList,
-                                                     const glm::dvec3 &intPoint, const glm::dvec3 &localNormal,
-                                                     const Ray &cameraRay) const noexcept {
+                                               const std::vector<std::shared_ptr<LightBase>> &lightList, const glm::dvec3 &intPoint,
+                                               const glm::dvec3 &localNormal, const Ray &cameraRay) const noexcept {
         glm::dvec3 spcColor{};
         double red = 0.0;
         double green = 0.0;
@@ -50,6 +50,7 @@ namespace qbRT {
         glm::dvec3 poi{};
         glm::dvec3 poiNormal{};
         glm::dvec3 poiColor{};
+        bool validInt = false;
 
         // Loop through all of the lights in the scene.
         for(const auto &currentLight : lightList) {
@@ -67,7 +68,6 @@ namespace qbRT {
 
             /* Loop through all objects in the scene to check if any
                 obstruct light from this source. */
-            bool validInt = false;
             for(const auto &sceneObject : objectList) {
                 validInt = sceneObject->TestIntersection(lightRay, poi, poiNormal, poiColor);
                 if(validInt) { break; }
@@ -77,8 +77,9 @@ namespace qbRT {
                 computing the specular component. */
             if(!validInt) {
                 // Compute the reflection vector.
-                const glm::dvec3 d = lightRay.m_lab;
-                const glm::dvec3 r = glm::normalize(d - (2 * glm::dot(d, localNormal) * localNormal));
+                // const glm::dvec3 d = lightRay.m_lab;
+                // const glm::dvec3 r = glm::normalize(d - (2 * glm::dot(d, localNormal) * localNormal));
+                const glm::dvec3 r = glm::normalize(glm::reflect(lightRay.m_lab, localNormal));
 
                 // Compute the dot product.
                 const glm::dvec3 v = glm::normalize(cameraRay.m_lab);
@@ -100,3 +101,4 @@ namespace qbRT {
     }
     DISABLE_WARNINGS_POP()
 }  // namespace qbRT
+   // NOLINTEND(*-include-cleaner)

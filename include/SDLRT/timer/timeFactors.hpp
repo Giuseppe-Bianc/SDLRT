@@ -31,7 +31,7 @@ namespace vnd {
      * nanoseconds by multiplying the time value with this factor.
      */
     inline static constexpr long double SECONDSFACTOR = 1'000'000'000.0L;
-
+    inline static constexpr long double STOMSFACTOR = 1000.0L;
     /**
      * @brief A multiplier factor used in the Timer class.
      *

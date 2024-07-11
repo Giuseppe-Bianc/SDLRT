@@ -39,6 +39,7 @@ DISABLE_WARNINGS_PUSH(
 #include <numbers>
 #include <ostream>
 #include <optional>
+#include <print>
 #include <random>
 #include <ranges>
 #include <set>
@@ -74,6 +75,7 @@ static inline constexpr long double PI = std::numbers::pi_v<long double>;
 static inline constexpr long double TWO_PI = 2 * PI;
 static inline constexpr long double HALF_PI = PI / 2;
 static inline constexpr auto HALF_PID = NC_D(PI / 2);
+static inline constexpr auto MAXDBL = std::numeric_limits<double>::max();
 static inline constexpr const auto *CNL = "\n";
 static inline constexpr const auto *CCR = "\r";
 static inline constexpr auto NL = CNL[0];
