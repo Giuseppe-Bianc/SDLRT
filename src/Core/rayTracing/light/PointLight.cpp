@@ -13,14 +13,22 @@ namespace qbRT {
                                          const std::vector<std::shared_ptr<ObjectBase>> &objectList,
                                          const std::shared_ptr<ObjectBase> &currentObject, glm::dvec3 &color, double &intensity) noexcept {
         const glm::dvec3 lightDir = glm::normalize(m_location - intPoint);
+        const double lightDist = glm::distance(m_location, intPoint);
         const glm::dvec3 startPoint = intPoint;
         const Ray lightRay(startPoint, startPoint + lightDir);
         glm::dvec3 poi{};
         glm::dvec3 poiNormal{};
         glm::dvec3 poiColor{};
         bool validInt = false;
+        double dist{};
         for(const auto &sceneObject : objectList) {
-            if(sceneObject != currentObject) { validInt = sceneObject->TestIntersection(lightRay, poi, poiNormal, poiColor); }
+            if(sceneObject != currentObject) {
+                validInt = sceneObject->TestIntersection(lightRay, poi, poiNormal, poiColor);
+                if(validInt) {
+                    dist = glm::distance(poi, startPoint);
+                    if(dist > lightDist) { validInt = false; }
+                }
+            }
 
             // If we have an intersection, then there is no point checking further
             //     so we can break out of the loop. In other words, this object is

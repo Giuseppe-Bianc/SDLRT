@@ -16,7 +16,9 @@ namespace vnd {
 
         explicit TimeValues(const long double nanoseconds_) noexcept
           : seconds(nanoseconds_ / SECONDSFACTOR), millis(nanoseconds_ / MILLISECONDSFACTOR), micro(nanoseconds_ / MICROSECONDSFACTOR),
-            nano(nanoseconds_) {}
+            nano(nanoseconds_) {
+            if(minutes > 0) { LINFO(MINUTESFACTOR); }
+        }
 
         TimeValues(const long double seconds_, const long double millis_, const long double micro_, const long double nano_) noexcept
           : seconds(seconds_), millis(millis_), micro(micro_), nano(nano_) {}
@@ -26,12 +28,14 @@ namespace vnd {
         TimeValues &operator=(const TimeValues &other) = default;
         TimeValues &operator=(TimeValues &&other) noexcept = default;
 
+        [[nodiscard]] const long double &get_minutes() const noexcept { return minutes; }
         [[nodiscard]] const long double &get_seconds() const noexcept { return seconds; }
         [[nodiscard]] const long double &get_millis() const noexcept { return millis; }
         [[nodiscard]] const long double &get_micro() const noexcept { return micro; }
         [[nodiscard]] const long double &get_nano() const noexcept { return nano; }
 
     private:
+        long double minutes{};
         long double seconds{};
         long double millis{};
         long double micro{};
@@ -75,6 +79,34 @@ namespace vnd {
 
             return std::make_tuple(C_LD(durationSc.count()), C_LD(durationMs.count()), C_LD(durationUs.count()), C_LD(durationNs.count()));
         }
+        /*[[nodiscard]] static std::tuple<long double, long double, long double, long double, long double> calculateTransformTimeMinutes(
+            long double inputTimeSeconds) noexcept {
+            const ch::duration<long double> durationMinutes(inputTimeSeconds);
+
+            const auto durationMt = ch::duration_cast<ch::minutes>(durationMinutes);
+            const auto durationSc = ch::duration_cast<ch::seconds>(durationMinutes - durationMt);
+            const auto durationMs = ch::duration_cast<ch::milliseconds>(durationMinutes - durationMt - durationSc);
+            const auto durationUs = ch::duration_cast<ch::microseconds>(durationMinutes - durationMt - durationSc - durationMs);
+            const auto durationNs = ch::duration_cast<ch::nanoseconds>(durationMinutes - durationMt - durationSc - durationMs - durationUs);
+
+            return std::make_tuple(C_LD(durationMt.count()), C_LD(durationSc.count()), C_LD(durationMs.count()), C_LD(durationUs.count()),
+                                   C_LD(durationNs.count()));
+        }*/
+
+        [[nodiscard]] static std::tuple<long double, long double, long double, long double, long double> calculateTransformTimeMinutes(
+            long double inputTimeMinutes) noexcept {
+            const ch::duration<long double, std::ratio<60>> durationMins(inputTimeMinutes);
+
+            const auto durationM = ch::duration_cast<ch::minutes>(durationMins);
+            const auto durationSecs = ch::duration_cast<ch::seconds>(durationMins - durationM);
+            const auto durationMs = ch::duration_cast<ch::milliseconds>(durationMins - durationM - durationSecs);
+            const auto durationUs = ch::duration_cast<ch::microseconds>(durationMins - durationM - durationSecs - durationMs);
+            const auto durationNs = ch::duration_cast<ch::nanoseconds>(durationMins - durationM - durationSecs - durationMs - durationUs);
+
+            return std::make_tuple(C_LD(durationM.count()), C_LD(durationSecs.count()), C_LD(durationMs.count()), C_LD(durationUs.count()),
+                                   C_LD(durationNs.count()));
+        }
+
         [[nodiscard]] static std::string transformTimeMicro(long double inputTimeMicro) noexcept {
             const auto &[us, ns] = calculateTransformTimeMicro(inputTimeMicro);
             return FORMAT("{}us,{}ns", us, ns);
@@ -89,7 +121,12 @@ namespace vnd {
             const auto &[s, ms, us, ns] = calculateTransformTimeSeconds(inputTimeSeconds);
             return FORMAT("{}s,{}ms,{}us,{}ns", s, ms, us, ns);
         }
+        [[nodiscard]] static std::string transformTimeMinutes(long double inputTimeMinutes) noexcept {
+            const auto &[m, s, ms, us, ns] = calculateTransformTimeMinutes(inputTimeMinutes);
+            return FORMAT("{}m,{}s,{}ms,{}us,{}ns", m, s, ms, us, ns);
+        }
         [[nodiscard]] std::string toString() const noexcept {
+            if(timeLabel == "m") { return transformTimeMinutes(timeVal); }
             if(timeLabel == "s") { return transformTimeSeconds(timeVal); }
             if(timeLabel == "ms") { return transformTimeMilli(timeVal); }
             if(timeLabel == "us") { return transformTimeMicro(timeVal); }
@@ -111,10 +148,15 @@ namespace vnd {
             const auto &[s, ms, us, ns] = calculateTransformTimeSeconds(inputTimeSeconds);
             return FORMATST("{}s,{}ms,{}us,{}ns", s, ms, us, ns);
         }
+        [[nodiscard]] static std::string transformTimeMinutesSTD(long double inputTimeMinutes) noexcept {
+            const auto &[m, s, ms, us, ns] = calculateTransformTimeMinutes(inputTimeMinutes);
+            return FORMATST("{}m,{}s,{}ms,{}us,{}ns", m, s, ms, us, ns);
+        }
         [[nodiscard]] std::string toStringSTD() const noexcept {
-            if(timeLabel == "s") { return transformTimeSeconds(timeVal); }
-            if(timeLabel == "ms") { return transformTimeMilli(timeVal); }
-            if(timeLabel == "us") { return transformTimeMicro(timeVal); }
+            if(timeLabel == "m") { return transformTimeMinutesSTD(timeVal); }
+            if(timeLabel == "s") { return transformTimeSecondsSTD(timeVal); }
+            if(timeLabel == "ms") { return transformTimeMilliSTD(timeVal); }
+            if(timeLabel == "us") { return transformTimeMicroSTD(timeVal); }
             return FORMATST("{}{}", timeVal, timeLabel);
         }
 
@@ -141,7 +183,9 @@ namespace vnd {
         Times &operator=(Times &&other) noexcept = default;
 
         [[nodiscard]] ValueLable getRelevantTimeframe() const noexcept {
-            if(values.get_seconds() > 1) {  // seconds
+            if(values.get_seconds() / 60 > 1) {
+                return {values.get_seconds() / 60, labelminutes};
+            } else if(values.get_seconds() > 1) {  // seconds
                 return {values.get_seconds(), labelseconds};
             } else if(values.get_millis() > 1) {  // millis
                 return {values.get_millis(), labelmillis};
@@ -155,6 +199,7 @@ namespace vnd {
     private:
         // Campi della classe
         TimeValues values;
+        std::string_view labelminutes{"m"};
         std::string_view labelseconds{"s"};
         std::string_view labelmillis{"ms"};
         std::string_view labelmicro{"us"};
@@ -170,7 +215,7 @@ namespace vnd {
 
 // NOLINTNEXTLINE
 template <> struct fmt::formatter<vnd::ValueLable> : fmt::formatter<std::string_view> {
-    template <typename FormatContext> auto format(const vnd::ValueLable &val, FormatContext &ctx) {
+    auto format(vnd::ValueLable val, format_context &ctx) const -> format_context::iterator {
         return fmt::formatter<std::string_view>::format(val.toString(), ctx);
     }
 };

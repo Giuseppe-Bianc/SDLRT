@@ -227,13 +227,13 @@ namespace vnd {
  * @brief Specialization of the fmt::formatter for the Timer class.
  */
 template <> struct fmt::formatter<vnd::Timer> : formatter<std::string_view> {  // NOLINT(*-include-cleaner)
-    /**
-     * @brief Format the Timer object into a string view.
-     * @param timer The Timer object.
-     * @param ctx The format context.
-     * @return A formatted string view.
-     */
-    template <typename FormatContext> auto format(const vnd::Timer &timer, FormatContext &ctx) {
+                                                                               /**
+                                                                                * @brief Format the Timer object into a string view.
+                                                                                * @param timer The Timer object.
+                                                                                * @param ctx The format context.
+                                                                                * @return A formatted string view.
+                                                                                */
+    auto format(const vnd::Timer &timer, format_context &ctx) const -> format_context::iterator {
         return formatter<std::string_view>::format(timer.to_string(), ctx);
     }
 };

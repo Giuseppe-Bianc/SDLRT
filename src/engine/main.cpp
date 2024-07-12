@@ -8,6 +8,7 @@
 // the source template at `configured_files/config.hpp.in`.
 #include <SDLRT/sample_library.hpp>
 #include <internal_use_only/config.hpp>
+
 // NOLINTNEXTLINE(bugprone-exception-escape *-function-cognitive-complexity)
 auto main(int argc, char *const argv[]) -> int {
     // NOLINTNEXTLINE

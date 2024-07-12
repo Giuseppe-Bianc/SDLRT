@@ -15,6 +15,8 @@ add_library(core sample_library.cpp
         rayTracing/primitives/ObjPlane.cpp
         rayTracing/materials/MaterialBase.cpp
         rayTracing/materials/SimpleMaterial.cpp
+        rayTracing/primitives/Cylinder.cpp
+        rayTracing/primitives/Cone.cpp
 )
 
 

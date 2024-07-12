@@ -4,7 +4,7 @@
 
 #include "SDLRT/rayTracing/primitives/ObjectBase.hpp"
 
-static inline constexpr auto EPSILON = 1e-24;
+static inline constexpr auto EPSILON = 1e-30;
 
 namespace qbRT {
     bool ObjectBase::TestIntersection([[maybe_unused]] const Ray &castRay, [[maybe_unused]] glm::dvec3 &intPoint,
@@ -19,5 +19,5 @@ namespace qbRT {
 
     void ObjectBase::SetTransformMatrix(const GTform &transformMatrix) noexcept { m_transformMatrix = transformMatrix; }
 
-    bool ObjectBase::CloseEnough(const double f1, const double f2) const noexcept { return std::fabs(f1 - f2) < EPSILON; }
+    bool ObjectBase::CloseEnough(const double f1, const double f2) const noexcept { return std::abs(f1 - f2) < EPSILON; }
 }  // namespace qbRT

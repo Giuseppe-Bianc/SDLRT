@@ -23,7 +23,7 @@ public:
     void Initialize(const int xSize, const int ySize, SDL_Renderer *pRenderer);
 
     // Function to set pixels.
-    void SetPixel(const std::size_t x, const size_t y, const double red, const double green, const double blue) noexcept;
+    void SetPixel(const std::size_t x, const size_t y, const glm::dvec3 &color) noexcept;
     void ComputeMaxValues();
     [[nodiscard]] std::vector<std::uint32_t> ArrangePixels();
 

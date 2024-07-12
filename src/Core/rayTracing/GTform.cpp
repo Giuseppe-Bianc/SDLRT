@@ -8,7 +8,9 @@ namespace qbRT {
 
     static inline constexpr auto IDENT_MAT = glm::dmat4(1.0);
 
-    void GTform::SetTransform(const glm::dvec3 &translation, const glm::dvec3 &rotation, const glm::dvec3 &scale) {
+    DISABLE_WARNINGS_PUSH(26447)
+
+    void GTform::SetTransform(const glm::dvec3 &translation, const glm::dvec3 &rotation, const glm::dvec3 &scale) noexcept {
         // Define matrices for translation, rotation, and scale using GLM functions.
         const glm::dmat4 translationMatrix = glm::translate(IDENT_MAT, translation);
         const glm::dmat4 rotationMatrixX = glm::rotate(IDENT_MAT, rotation.x, glm::dvec3(1.0, 0.0, 0.0));
@@ -16,13 +18,14 @@ namespace qbRT {
         const glm::dmat4 rotationMatrixZ = glm::rotate(IDENT_MAT, rotation.z, glm::dvec3(0.0, 0.0, 1.0));
         const glm::dmat4 scaleMatrix = glm::scale(IDENT_MAT, scale);
         // Combine to give the final forward transform matrix.
-        m_fwdtfm = translationMatrix * rotationMatrixZ * rotationMatrixY * rotationMatrixX * scaleMatrix;
+        m_fwdtfm = translationMatrix * rotationMatrixX * rotationMatrixY * rotationMatrixZ * scaleMatrix;
         // std::swap(m_fwdtfm[0][3], m_fwdtfm[3][0]);
         //  Combine to give the final forward transform matrix.
         m_bcktfm = glm::inverse(m_fwdtfm);
     }
+    DISABLE_WARNINGS_POP()
 
-    Ray GTform::Apply(const Ray &inputRay, bool dirFlag) const {
+    Ray GTform::Apply(const Ray &inputRay, bool dirFlag) const noexcept {
         // Create an output object.
         Ray outputRay;
 
@@ -40,7 +43,7 @@ namespace qbRT {
         return outputRay;
     }
 
-    glm::dvec3 GTform::Apply(const glm::dvec3 &inputVector, bool dirFlag) const {
+    glm::dvec3 GTform::Apply(const glm::dvec3 &inputVector, bool dirFlag) const noexcept {
         // Convert inputVector to a 4-element vector.
         const glm::dvec4 tempVector{inputVector, 1.0};
 

@@ -15,83 +15,119 @@ DISABLE_WARNINGS_PUSH(26447)
 namespace qbRT {
 
     Scene::Scene() noexcept {
-        // Create some materials.
-        auto testMaterial = MAKE_SHARED(SimpleMaterial, SimpleMaterial());
-        auto testMaterial2 = MAKE_SHARED(SimpleMaterial, SimpleMaterial());
-        auto testMaterial3 = MAKE_SHARED(SimpleMaterial, SimpleMaterial());
-        auto floorMaterial = MAKE_SHARED(SimpleMaterial, SimpleMaterial());
-
-        // Setup the materials.
-        testMaterial->m_baseColor = {0.25, 0.5, 0.8};
-        testMaterial->m_reflectivity = 0.1;
-        testMaterial->m_shininess = 10.0;
-
-        testMaterial2->m_baseColor = {1.0, 0.5, 0.0};
-        testMaterial2->m_reflectivity = 0.75;
-        testMaterial2->m_shininess = 10.0;
-
-        testMaterial3->m_baseColor = {1.0, 0.8, 0.0};
-        testMaterial3->m_reflectivity = 0.25;
-        testMaterial3->m_shininess = 10.0;
-
-        floorMaterial->m_baseColor = {1.0, 1.0, 1.0};
-        floorMaterial->m_reflectivity = 0.5;
-        floorMaterial->m_shininess = 0.0;
-
         // Configure the camera.
         vnd::Timer ctimer{"scene set camera"};
-        m_camera.SetPosition({0.0, -10.0, -2.0});
+        m_camera.SetPosition({3.0, -5.0, -2.0});
         m_camera.SetLookAt({0.0, 0.0, 0.0});
         m_camera.SetUp({0.0, 0.0, 1.0});
-        m_camera.SetHorzSize(0.25);
+        m_camera.SetHorzSize(0.75);
         m_camera.SetAspect(16.0 / 9.0);
         m_camera.UpdateCameraGeometry();
         LINFO("{}", ctimer);
         const vnd::AutoTimer timer{"scene set word data"};  // Construct a test sphere.
         // Construct a test plane and spheres.
-        m_objectList.emplace_back(MAKE_SHARED(ObjSphere, ObjSphere()));
-        m_objectList.emplace_back(MAKE_SHARED(ObjSphere, ObjSphere()));
-        m_objectList.emplace_back(MAKE_SHARED(ObjSphere, ObjSphere()));
-        m_objectList.emplace_back(MAKE_SHARED(ObjPlane, ObjPlane()));
+        auto silverMetal = MAKE_SHARED(SimpleMaterial, SimpleMaterial());
+        auto goldMetal = MAKE_SHARED(SimpleMaterial, SimpleMaterial());
+        auto blueDiffuse = MAKE_SHARED(SimpleMaterial, SimpleMaterial());
+        auto yellowDiffuse = MAKE_SHARED(SimpleMaterial, SimpleMaterial());
+        auto orangeDiffuse = MAKE_SHARED(SimpleMaterial, SimpleMaterial());
+        auto floorMaterial = MAKE_SHARED(SimpleMaterial, SimpleMaterial());
+        auto wallMaterial = MAKE_SHARED(SimpleMaterial, SimpleMaterial());
 
-        // Define a transform for the plane.
-        GTform planeMatrix, testMatrix1, testMatrix2, testMatrix3;
-        testMatrix1.SetTransform({-1.5, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.5, 0.5, 0.5});
+        // Setup the materials.
+        silverMetal->m_baseColor = {0.5, 0.5, 0.8};
+        silverMetal->m_reflectivity = 0.5;
+        silverMetal->m_shininess = 20.0;
 
-        testMatrix2.SetTransform({0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.5, 0.5, 0.5});
+        goldMetal->m_baseColor = {0.8, 0.8, 0.3};
+        goldMetal->m_reflectivity = 0.25;
+        goldMetal->m_shininess = 20.0;
 
-        testMatrix3.SetTransform({1.5, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.5, 0.5, 0.5});
+        blueDiffuse->m_baseColor = {0.2, 0.2, 0.8};
+        blueDiffuse->m_reflectivity = 0.05;
+        blueDiffuse->m_shininess = 5.0;
 
-        planeMatrix.SetTransform({0.0, 0.0, 0.75}, {0.0, 0.0, 0.0}, {4.0, 4.0, 1.0});
-        m_objectList.at(0)->SetTransformMatrix(testMatrix1);
-        m_objectList.at(1)->SetTransformMatrix(testMatrix2);
-        m_objectList.at(2)->SetTransformMatrix(testMatrix3);
-        m_objectList.at(3)->SetTransformMatrix(planeMatrix);
+        yellowDiffuse->m_baseColor = {0.8, 0.8, 0.2};
+        yellowDiffuse->m_reflectivity = 0.05;
+        yellowDiffuse->m_shininess = 5.0;
 
-        m_objectList.at(0)->m_baseColor = {0.25, 0.5, 0.8};
-        m_objectList.at(1)->m_baseColor = {1.0, 0.5, 0.0};
-        m_objectList.at(2)->m_baseColor = {1.0, 0.8, 0.0};
-        m_objectList.at(3)->m_baseColor = {0.5, 0.5, 0.5};
+        orangeDiffuse->m_baseColor = {1.0, 0.5, 0.0};
+        orangeDiffuse->m_reflectivity = 0.05;
+        orangeDiffuse->m_shininess = 5.0;
 
-        // Assign materials to objects.
-        m_objectList.at(0)->AssignMaterial(testMaterial3);
-        m_objectList.at(1)->AssignMaterial(testMaterial);
-        m_objectList.at(2)->AssignMaterial(testMaterial2);
-        m_objectList.at(3)->AssignMaterial(floorMaterial);
+        floorMaterial->m_baseColor = {1.0, 1.0, 1.0};
+        floorMaterial->m_reflectivity = 0.0;
+        floorMaterial->m_shininess = 0.0;
 
-        // Construct a test light.
+        wallMaterial->m_baseColor = {1.0, 0.125, 0.125};
+        wallMaterial->m_reflectivity = 0.75;
+        wallMaterial->m_shininess = 0.0;
+        // Create and setup objects.
+        auto cone = MAKE_SHARED(qbRT::Cone, qbRT::Cone());
+        cone->SetTransformMatrix(qbRT::GTform{{0.0, 0.0, -0.5}, {0.0, 0.0, 0.0}, {1.0, 1.0, 2.0}});
+        cone->AssignMaterial(silverMetal);
+
+        auto leftSphere = MAKE_SHARED(qbRT::ObjSphere, qbRT::ObjSphere());
+        leftSphere->SetTransformMatrix(qbRT::GTform{{1.5, -2.0, 0.5}, {0.0, 0.0, 0.0}, {0.5, 0.5, 0.5}});
+        leftSphere->AssignMaterial(blueDiffuse);
+
+        auto rightSphere = MAKE_SHARED(qbRT::ObjSphere, qbRT::ObjSphere());
+        rightSphere->SetTransformMatrix(qbRT::GTform{{1.5, 0.0, 0.0}, {0.0, 0.0, 0.0}, {1.0, 1.0, 1.0}});
+        rightSphere->AssignMaterial(yellowDiffuse);
+
+        auto topSphere = MAKE_SHARED(qbRT::ObjSphere, qbRT::ObjSphere());
+        topSphere->SetTransformMatrix(qbRT::GTform{{0.0, 0.0, -1.0}, {0.0, 0.0, 0.0}, {0.5, 0.5, 0.5}});
+        topSphere->AssignMaterial(orangeDiffuse);
+
+        auto floor = MAKE_SHARED(qbRT::ObjPlane, qbRT::ObjPlane());
+        floor->SetTransformMatrix(qbRT::GTform{{0.0, 0.0, 1.0}, {0.0, 0.0, 0.0}, {16.0, 16.0, 1.0}});
+        floor->AssignMaterial(floorMaterial);
+
+        auto leftWall = MAKE_SHARED(qbRT::ObjPlane, qbRT::ObjPlane());
+        leftWall->SetTransformMatrix(qbRT::GTform{{-4.0, 0.0, 0.0}, {0.0, -PI / 2.0, -PI / 2.0}, {16.0, 16.0, 1.0}});
+        leftWall->AssignMaterial(wallMaterial);
+
+        auto backWall = MAKE_SHARED(qbRT::ObjPlane, qbRT::ObjPlane());
+        backWall->SetTransformMatrix(qbRT::GTform{{0.0, 4.0, 0.0}, {-PI / 2.0, 0.0, 0.0}, {16.0, 16.0, 1.0}});
+        backWall->AssignMaterial(wallMaterial);
+
+        auto cylinder1 = MAKE_SHARED(qbRT::Cylinder, qbRT::Cylinder());
+        cylinder1->SetTransformMatrix(qbRT::GTform{{-1.5, -2.0, 1.0}, {0.0, -PI / 2.0, 0.0}, {0.25, 0.25, 1.0}});
+        cylinder1->AssignMaterial(goldMetal);
+
+        auto cylinder2 = MAKE_SHARED(qbRT::Cylinder, qbRT::Cylinder());
+        cylinder2->SetTransformMatrix(qbRT::GTform{{-1.0, -2.0, 0.0}, {0.0, 0.0, 0.0}, {0.25, 0.25, 1.0}});
+        cylinder2->AssignMaterial(silverMetal);
+
+        auto cone2 = MAKE_SHARED(qbRT::Cone, qbRT::Cone());
+        cone2->SetTransformMatrix(qbRT::GTform{{0.0, -1.0, 0.0}, {PI / 4.0, 0.0, 0.0}, {0.5, 0.5, 1.0}});
+        cone2->AssignMaterial(goldMetal);
+
+        // Put the objects into the scene.
+        m_objectList.emplace_back(cone);
+        m_objectList.emplace_back(leftSphere);
+        m_objectList.emplace_back(rightSphere);
+        m_objectList.emplace_back(topSphere);
+        m_objectList.emplace_back(floor);
+        m_objectList.emplace_back(leftWall);
+        m_objectList.emplace_back(backWall);
+        m_objectList.emplace_back(cylinder1);
+        m_objectList.emplace_back(cylinder2);
+        m_objectList.emplace_back(cone2);
+
+        m_objectList.emplace_back(floor);
+        m_objectList.emplace_back(cylinder1);
+
         m_lightList.emplace_back(MAKE_SHARED(PointLight, PointLight()));
-        m_lightList.at(0)->m_location = {5.0, -10.0, -5.0};
-        m_lightList.at(0)->m_color = {0.0, 0.0, 1.0};
+        m_lightList.at(0)->m_location = {3.0, -10.0, -5.0};
+        m_lightList.at(0)->m_color = {1.0, 1.0, 1.0};
 
         m_lightList.emplace_back(MAKE_SHARED(PointLight, PointLight()));
-        m_lightList.at(1)->m_location = {-5.0, -10.0, -5.0};
-        m_lightList.at(1)->m_color = {1.0, 0.0, 0.0};
-
-        m_lightList.emplace_back(MAKE_SHARED(PointLight, PointLight()));
-        m_lightList.at(2)->m_location = {0.0, -10.0, -5.0};
-        m_lightList.at(2)->m_color = {0.0, 1.0, 0.0};
+        m_lightList.at(1)->m_location = {0.0, -10.0, -5.0};
+        m_lightList.at(1)->m_color = {1.0, 1.0, 1.0};
+        // Construct and setup the lights.
     }
+
     bool Scene::Render(qbImage &outputImage) const {
         // Get the dimensions of the output image.
         vnd::Timer timerd{"scene.Render::data"};
@@ -132,11 +168,11 @@ namespace qbRT {
                         MaterialBase::m_reflectionRayCount = 0;
                         glm::dvec3 color = closestObject->m_pMaterial->ComputeColor(m_objectList, m_lightList, closestObject,
                                                                                     closestIntPoint, closestLocalNormal, cameraRay);
-                        outputImage.SetPixel(x, y, color[0], color[1], color[2]);
+                        outputImage.SetPixel(x, y, color);
                     } else {
                         glm::dvec3 matColor = MaterialBase::ComputeDiffuseColor(m_objectList, m_lightList, closestObject, closestIntPoint,
                                                                                 closestLocalNormal, closestObject->m_baseColor);
-                        outputImage.SetPixel(x, y, matColor[0], matColor[1], matColor[2]);
+                        outputImage.SetPixel(x, y, matColor);
                     }
                 }
             }

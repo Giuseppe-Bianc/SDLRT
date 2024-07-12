@@ -7,7 +7,6 @@
 DISABLE_WARNINGS_PUSH(26447)
 
 namespace qbRT {
-    static inline constexpr glm::dvec3 localOrigin{0.0, 0.0, 0.0};
     static inline constexpr glm::dvec3 normalVector{0.0, 0.0, -1.0};
     bool ObjPlane::TestIntersection(const Ray &castRay, glm::dvec3 &intPoint, glm::dvec3 &localNormal,
                                     glm::dvec3 &localColor) const noexcept {

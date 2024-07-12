@@ -35,10 +35,10 @@ void qbImage::Initialize(const int xSize, const int ySize, SDL_Renderer *pRender
 }
 
 // Function to set pixels.
-void qbImage::SetPixel(const std::size_t x, const std::size_t y, const double red, const double green, const double blue) noexcept {
-    m_rChannel[x][y] = red;
-    m_gChannel[x][y] = green;
-    m_bChannel[x][y] = blue;
+void qbImage::SetPixel(const std::size_t x, const std::size_t y, const glm::dvec3 &color) noexcept {
+    m_rChannel[x][y] = color[0];
+    m_gChannel[x][y] = color[1];
+    m_bChannel[x][y] = color[2];
 }
 
 std::vector<std::uint32_t> qbImage::ArrangePixels() {

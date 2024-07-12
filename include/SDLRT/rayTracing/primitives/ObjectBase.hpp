@@ -7,6 +7,9 @@
 #include "../Ray.hpp"
 
 namespace qbRT {
+    static inline constexpr double minValValue = 10e6;
+    static inline constexpr glm::dvec3 localOrigin{0.0, 0.0, 0.0};
+    static inline constexpr auto maxtrav = 100e6;
 
     /* Forward-declare the material base class. This will be
         overriden later. */

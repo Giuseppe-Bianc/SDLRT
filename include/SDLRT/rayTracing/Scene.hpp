@@ -6,6 +6,9 @@
 
 #include "../timer/Timer.hpp"
 #include "./light/PointLight.hpp"
+
+#include "./primitives/Cone.hpp"
+#include "./primitives/Cylinder.hpp"
 #include "./primitives/ObjPlane.hpp"
 #include "./primitives/ObjSphere.hpp"
 #include "Camera.hpp"
