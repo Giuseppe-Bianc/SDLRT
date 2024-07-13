@@ -14,8 +14,7 @@ namespace qbRT {
     static inline constexpr auto zvec = glm::dvec3{0.0, 0.0, 0.0};
 
     // NOLINTNEXTLINE(*-easily-swappable-parameters)
-    bool ObjSphere::TestIntersection(const Ray &castRay, glm::dvec3 &intPoint, glm::dvec3 &localNormal,
-                                     [[maybe_unused]] glm::dvec3 &localColor) const noexcept {
+    bool ObjSphere::TestIntersection(const Ray &castRay, glm::dvec3 &intPoint, glm::dvec3 &localNormal, glm::dvec3 &localColor) noexcept {
         const Ray bckRay = m_transformMatrix.Apply(castRay, BCKTFORM);
         // Compute the values of a, b and c.
         const glm::dvec3 vhat = glm::normalize(bckRay.m_lab);
@@ -45,19 +44,43 @@ namespace qbRT {
                 return false;
             } else {
                 // Determine which point of intersection was closest to the camera.
-                /*if(t1 < t2) {
-                    intPoint = castRay.m_point1 + (vhat * t1);
+                if(t1 < t2) {
+                    if(t1 > 0.0) {
+                        poi = bckRay.m_point1 + (vhat * t1);
+                    } else {
+                        if(t2 > 0.0) {
+                            poi = bckRay.m_point1 + (vhat * t2);
+                        } else {
+                            return false;
+                        }
+                    }
                 } else {
-                    intPoint = castRay.m_point1 + (vhat * t2);
-                }*/
-                // Calculate the intersection point based on the smaller t value
-                const double tMin = std::min(t1, t2);
-                poi = bckRay.m_point1 + vhat * tMin;
+                    if(t2 > 0.0) {
+                        poi = bckRay.m_point1 + (vhat * t2);
+                    } else {
+                        if(t1 > 0.0) {
+                            poi = bckRay.m_point1 + (vhat * t1);
+                        } else {
+                            return false;
+                        }
+                    }
+                }
             }
             intPoint = m_transformMatrix.Apply(poi, FWDTFORM);
             const glm::dvec3 newObjOrigin = m_transformMatrix.Apply(zvec, FWDTFORM);
             localNormal = glm::normalize(intPoint - newObjOrigin);
             localColor = m_baseColor;
+            // Compute and store (u,v) coordinates for possible later use.
+            double x = poi[0];
+            double y = poi[1];
+            double z = poi[2];
+            double u = atan2(sqrt(pow(x, 2.0) + pow(y, 2.0)), z);
+            double v = atan2(y, x);
+
+            u /= PI;
+            v /= PI;
+
+            m_uvCoords = glm::dvec2(u, v);
             return true;
         } else {
             return false;

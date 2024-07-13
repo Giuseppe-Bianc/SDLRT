@@ -12,8 +12,7 @@ namespace qbRT {
     public:
         ObjPlane() = default;
         ~ObjPlane() override = default;
-        bool TestIntersection(const Ray &castRay, glm::dvec3 &intPoint, glm::dvec3 &localNormal,
-                              glm::dvec3 &localColor) const noexcept override;
+        bool TestIntersection(const Ray &castRay, glm::dvec3 &intPoint, glm::dvec3 &localNormal, glm::dvec3 &localColor) noexcept override;
     };
 
 }  // namespace qbRT

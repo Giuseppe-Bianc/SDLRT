@@ -12,7 +12,7 @@ namespace qbRT {
         Cone() = default;
         virtual ~Cone() override = default;
         virtual bool TestIntersection(const Ray &castRay, glm::dvec3 &intPoint, glm::dvec3 &localNormal,
-                                      glm::dvec3 &localColor) const noexcept override;
+                                      glm::dvec3 &localColor) noexcept override;
     };
 
 }  // namespace qbRT

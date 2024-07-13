@@ -24,6 +24,7 @@ public:
 
     // Function to set pixels.
     void SetPixel(const std::size_t x, const size_t y, const glm::dvec3 &color) noexcept;
+    void SetPixel(const std::size_t x, const std::size_t y, const glm::dvec4 &color) noexcept;
     void ComputeMaxValues();
     [[nodiscard]] std::vector<std::uint32_t> ArrangePixels();
 

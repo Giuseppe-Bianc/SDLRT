@@ -22,8 +22,7 @@ namespace qbRT {
         virtual ~ObjectBase() = default;
 
         // Function to test for intersections.
-        virtual bool TestIntersection(const Ray &castRay, glm::dvec3 &intPoint, glm::dvec3 &localNormal,
-                                      glm::dvec3 &localColor) const noexcept;
+        virtual bool TestIntersection(const Ray &castRay, glm::dvec3 &intPoint, glm::dvec3 &localNormal, glm::dvec3 &localColor) noexcept;
         void SetTransformMatrix(const GTform &transformMatrix) noexcept;
         // Function to test whether two floating-point numbers are close to being equal.
         bool CloseEnough(const double f1, const double f2) const noexcept;
@@ -39,6 +38,7 @@ namespace qbRT {
         // A reference to the material assigned to this object.
         std::shared_ptr<MaterialBase> m_pMaterial;
         bool m_hasMaterial = false;
+        glm::dvec2 m_uvCoords;
     };
 
 }  // namespace qbRT

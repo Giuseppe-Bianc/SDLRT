@@ -3,7 +3,10 @@
 //
 // NOLINTBEGIN(*-include-cleaner  *-easily-swappable-parameters)
 #include "SDLRT/rayTracing/Scene.hpp"
+#include "SDLRT/rayTracing/materials/SimpleRefractive.hpp"
 #include "SDLRT/rayTracing/materials/simplematerial.hpp"
+#include "SDLRT/rayTracing/textures/Checker.hpp"
+#include "SDLRT/rayTracing/textures/Image.hpp"
 
 static inline constexpr double max_value = 255.0;
 static inline constexpr auto max_valueui8t = NC_UI8T(255.0);
@@ -13,119 +16,163 @@ static inline constexpr double scale = 0.94605;
 DISABLE_WARNINGS_PUSH(26447)
 
 namespace qbRT {
+    fs::path calculateRelativePathToSrcRes(const fs::path &executablePath, const fs::path &targetFile) {
+        // Get the parent directory of the executable path
+        fs::path parentDir = executablePath.parent_path();
 
+        // Traverse up the directory tree until we find a directory containing "src"
+        while(!fs::exists(parentDir / "src")) {
+            parentDir = parentDir.parent_path();
+            // Check if we reached the root directory and "src" was not found
+            if(parentDir == parentDir.root_path()) {
+                std::cerr << "Error: 'src' directory not found in the path." << std::endl;
+                return {};  // Return an empty path or handle error as needed
+            }
+        }
+
+        // Move up one more level to reach the parent directory of "src"
+        parentDir = parentDir.parent_path();
+        auto resp = fs::path("src") / "Core" / "res";
+        // Construct the relative path to the target file
+        auto relativePathToTarget = parentDir / resp / targetFile;
+        // Construct the path to the target file under "src/Core/res"
+
+        // Calculate the relative path from the executable's directory
+        auto relativePath = fs::relative(relativePathToTarget, executablePath);
+
+        return relativePath.lexically_normal();
+    }
     Scene::Scene() noexcept {
         // Configure the camera.
         vnd::Timer ctimer{"scene set camera"};
-        m_camera.SetPosition({3.0, -5.0, -2.0});
+        // **************************************************************************************
+        // Configure the camera.
+        // **************************************************************************************
+        m_camera.SetPosition({2.0, -5.0, 0.25});
         m_camera.SetLookAt({0.0, 0.0, 0.0});
         m_camera.SetUp({0.0, 0.0, 1.0});
-        m_camera.SetHorzSize(0.75);
+        m_camera.SetHorzSize(1.0);
         m_camera.SetAspect(16.0 / 9.0);
         m_camera.UpdateCameraGeometry();
         LINFO("{}", ctimer);
-        const vnd::AutoTimer timer{"scene set word data"};  // Construct a test sphere.
-        // Construct a test plane and spheres.
-        auto silverMetal = MAKE_SHARED(SimpleMaterial, SimpleMaterial());
-        auto goldMetal = MAKE_SHARED(SimpleMaterial, SimpleMaterial());
-        auto blueDiffuse = MAKE_SHARED(SimpleMaterial, SimpleMaterial());
-        auto yellowDiffuse = MAKE_SHARED(SimpleMaterial, SimpleMaterial());
-        auto orangeDiffuse = MAKE_SHARED(SimpleMaterial, SimpleMaterial());
-        auto floorMaterial = MAKE_SHARED(SimpleMaterial, SimpleMaterial());
-        auto wallMaterial = MAKE_SHARED(SimpleMaterial, SimpleMaterial());
+        const vnd::AutoTimer timer{"scene set word data"};
 
+        // **************************************************************************************
+        // Setup ambient lightling.
+        // **************************************************************************************
+        qbRT::MaterialBase::m_ambientColor = {1.0, 1.0, 1.0};
+        qbRT::MaterialBase::m_ambientIntensity = 0.2;
+
+        // **************************************************************************************
+        // Create some textures.
+        // **************************************************************************************
+        auto floorTexture = MAKE_SHARED(qbRT::Texture::Checker, qbRT::Texture::Checker());
+        auto imageTexture = MAKE_SHARED(qbRT::Texture::Image, qbRT::Texture::Image());
+
+        // **************************************************************************************
+        // Setup the textures.
+        // **************************************************************************************
+        floorTexture->SetTransform({0.0, 0.0}, 0.0, {16.0, 16.0});
+        const auto currentPath = fs::current_path();
+        auto testimage = calculateRelativePathToSrcRes(currentPath, fs::path("linux-logo.bmp"));
+        imageTexture->LoadImage(testimage.string());
+        imageTexture->SetTransform({0.0, 0.0}, 0.0, {1.0, 1.0});
+
+        // **************************************************************************************
+        // Create some materials.
+        // **************************************************************************************
+        auto floorMaterial = MAKE_SHARED(qbRT::SimpleMaterial, qbRT::SimpleMaterial());
+        auto imageMaterial = MAKE_SHARED(qbRT::SimpleMaterial, qbRT::SimpleMaterial());
+        auto sphereMaterial = MAKE_SHARED(qbRT::SimpleMaterial, qbRT::SimpleMaterial());
+        auto sphereMaterial2 = MAKE_SHARED(qbRT::SimpleMaterial, qbRT::SimpleMaterial());
+        auto sphereMaterial3 = MAKE_SHARED(qbRT::SimpleMaterial, qbRT::SimpleMaterial());
+        auto glassMaterial = MAKE_SHARED(qbRT::SimpleRefractive, qbRT::SimpleRefractive());
+
+        // **************************************************************************************
         // Setup the materials.
-        silverMetal->m_baseColor = {0.5, 0.5, 0.8};
-        silverMetal->m_reflectivity = 0.5;
-        silverMetal->m_shininess = 20.0;
-
-        goldMetal->m_baseColor = {0.8, 0.8, 0.3};
-        goldMetal->m_reflectivity = 0.25;
-        goldMetal->m_shininess = 20.0;
-
-        blueDiffuse->m_baseColor = {0.2, 0.2, 0.8};
-        blueDiffuse->m_reflectivity = 0.05;
-        blueDiffuse->m_shininess = 5.0;
-
-        yellowDiffuse->m_baseColor = {0.8, 0.8, 0.2};
-        yellowDiffuse->m_reflectivity = 0.05;
-        yellowDiffuse->m_shininess = 5.0;
-
-        orangeDiffuse->m_baseColor = {1.0, 0.5, 0.0};
-        orangeDiffuse->m_reflectivity = 0.05;
-        orangeDiffuse->m_shininess = 5.0;
-
+        // **************************************************************************************
         floorMaterial->m_baseColor = {1.0, 1.0, 1.0};
-        floorMaterial->m_reflectivity = 0.0;
+        floorMaterial->m_reflectivity = 0.25;
         floorMaterial->m_shininess = 0.0;
+        floorMaterial->AssignTexture(floorTexture);
 
-        wallMaterial->m_baseColor = {1.0, 0.125, 0.125};
-        wallMaterial->m_reflectivity = 0.75;
-        wallMaterial->m_shininess = 0.0;
+        imageMaterial->m_baseColor = {1.0, 0.125, 0.125};
+        imageMaterial->m_reflectivity = 0.0;
+        imageMaterial->m_shininess = 0.0;
+        imageMaterial->AssignTexture(imageTexture);
+
+        sphereMaterial->m_baseColor = {1.0, 0.2, 0.2};
+        sphereMaterial->m_reflectivity = 0.8;
+        sphereMaterial->m_shininess = 32.0;
+
+        sphereMaterial2->m_baseColor = {0.2, 1.0, 0.2};
+        sphereMaterial2->m_reflectivity = 0.8;
+        sphereMaterial2->m_shininess = 32.0;
+
+        sphereMaterial3->m_baseColor = {0.2, 0.2, 1.0};
+        sphereMaterial3->m_reflectivity = 0.8;
+        sphereMaterial3->m_shininess = 32.0;
+
+        glassMaterial->m_baseColor = {0.7, 0.7, 0.2};
+        glassMaterial->m_reflectivity = 0.25;
+        glassMaterial->m_shininess = 32.0;
+        glassMaterial->m_translucency = 0.75;
+        glassMaterial->m_ior = 1.333;
+
+        // **************************************************************************************
         // Create and setup objects.
-        auto cone = MAKE_SHARED(qbRT::Cone, qbRT::Cone());
-        cone->SetTransformMatrix(qbRT::GTform{{0.0, 0.0, -0.5}, {0.0, 0.0, 0.0}, {1.0, 1.0, 2.0}});
-        cone->AssignMaterial(silverMetal);
-
-        auto leftSphere = MAKE_SHARED(qbRT::ObjSphere, qbRT::ObjSphere());
-        leftSphere->SetTransformMatrix(qbRT::GTform{{1.5, -2.0, 0.5}, {0.0, 0.0, 0.0}, {0.5, 0.5, 0.5}});
-        leftSphere->AssignMaterial(blueDiffuse);
-
-        auto rightSphere = MAKE_SHARED(qbRT::ObjSphere, qbRT::ObjSphere());
-        rightSphere->SetTransformMatrix(qbRT::GTform{{1.5, 0.0, 0.0}, {0.0, 0.0, 0.0}, {1.0, 1.0, 1.0}});
-        rightSphere->AssignMaterial(yellowDiffuse);
-
-        auto topSphere = MAKE_SHARED(qbRT::ObjSphere, qbRT::ObjSphere());
-        topSphere->SetTransformMatrix(qbRT::GTform{{0.0, 0.0, -1.0}, {0.0, 0.0, 0.0}, {0.5, 0.5, 0.5}});
-        topSphere->AssignMaterial(orangeDiffuse);
-
+        // **************************************************************************************
         auto floor = MAKE_SHARED(qbRT::ObjPlane, qbRT::ObjPlane());
         floor->SetTransformMatrix(qbRT::GTform{{0.0, 0.0, 1.0}, {0.0, 0.0, 0.0}, {16.0, 16.0, 1.0}});
         floor->AssignMaterial(floorMaterial);
 
-        auto leftWall = MAKE_SHARED(qbRT::ObjPlane, qbRT::ObjPlane());
-        leftWall->SetTransformMatrix(qbRT::GTform{{-4.0, 0.0, 0.0}, {0.0, -PI / 2.0, -PI / 2.0}, {16.0, 16.0, 1.0}});
-        leftWall->AssignMaterial(wallMaterial);
+        // **************************************************************************************
+        auto imagePlane = MAKE_SHARED(qbRT::ObjPlane, qbRT::ObjPlane());
+        imagePlane->SetTransformMatrix(qbRT::GTform{{0.0, 5.0, -0.75}, {-PI / 2.0, 0.0, 0.0}, {1.75, 1.75, 1.0}});
+        imagePlane->AssignMaterial(imageMaterial);
 
-        auto backWall = MAKE_SHARED(qbRT::ObjPlane, qbRT::ObjPlane());
-        backWall->SetTransformMatrix(qbRT::GTform{{0.0, 4.0, 0.0}, {-PI / 2.0, 0.0, 0.0}, {16.0, 16.0, 1.0}});
-        backWall->AssignMaterial(wallMaterial);
+        // **************************************************************************************
+        auto sphere = MAKE_SHARED(qbRT::ObjSphere, qbRT::ObjSphere());
+        sphere->SetTransformMatrix(qbRT::GTform{{-2.0, -2.0, 0.25}, {0.0, 0.0, 0.0}, {0.75, 0.75, 0.75}});
+        sphere->AssignMaterial(sphereMaterial);
 
-        auto cylinder1 = MAKE_SHARED(qbRT::Cylinder, qbRT::Cylinder());
-        cylinder1->SetTransformMatrix(qbRT::GTform{{-1.5, -2.0, 1.0}, {0.0, -PI / 2.0, 0.0}, {0.25, 0.25, 1.0}});
-        cylinder1->AssignMaterial(goldMetal);
+        // **************************************************************************************
+        auto sphere2 = MAKE_SHARED(qbRT::ObjSphere, qbRT::ObjSphere());
+        sphere2->SetTransformMatrix(qbRT::GTform{{-2.0, -0.5, 0.25}, {0.0, 0.0, 0.0}, {0.75, 0.75, 0.75}});
+        sphere2->AssignMaterial(sphereMaterial2);
 
-        auto cylinder2 = MAKE_SHARED(qbRT::Cylinder, qbRT::Cylinder());
-        cylinder2->SetTransformMatrix(qbRT::GTform{{-1.0, -2.0, 0.0}, {0.0, 0.0, 0.0}, {0.25, 0.25, 1.0}});
-        cylinder2->AssignMaterial(silverMetal);
+        // **************************************************************************************
+        auto sphere3 = MAKE_SHARED(qbRT::ObjSphere, qbRT::ObjSphere());
+        sphere3->SetTransformMatrix(qbRT::GTform{{-2.0, -1.25, -1.0}, {0.0, 0.0, 0.0}, {0.75, 0.75, 0.75}});
+        sphere3->AssignMaterial(sphereMaterial3);
 
-        auto cone2 = MAKE_SHARED(qbRT::Cone, qbRT::Cone());
-        cone2->SetTransformMatrix(qbRT::GTform{{0.0, -1.0, 0.0}, {PI / 4.0, 0.0, 0.0}, {0.5, 0.5, 1.0}});
-        cone2->AssignMaterial(goldMetal);
+        // **************************************************************************************
+        auto sphere4 = MAKE_SHARED(qbRT::ObjSphere, qbRT::ObjSphere());
+        sphere4->SetTransformMatrix(qbRT::GTform{{2.0, -1.25, 0.25}, {0.0, 0.0, 0.0}, {0.75, 0.75, 0.75}});
+        sphere4->AssignMaterial(glassMaterial);
 
+        // **************************************************************************************
         // Put the objects into the scene.
-        m_objectList.emplace_back(cone);
-        m_objectList.emplace_back(leftSphere);
-        m_objectList.emplace_back(rightSphere);
-        m_objectList.emplace_back(topSphere);
+        // **************************************************************************************
         m_objectList.emplace_back(floor);
-        m_objectList.emplace_back(leftWall);
-        m_objectList.emplace_back(backWall);
-        m_objectList.emplace_back(cylinder1);
-        m_objectList.emplace_back(cylinder2);
-        m_objectList.emplace_back(cone2);
+        m_objectList.emplace_back(imagePlane);
+        m_objectList.emplace_back(sphere);
+        m_objectList.emplace_back(sphere2);
+        m_objectList.emplace_back(sphere3);
+        m_objectList.emplace_back(sphere4);
 
-        m_objectList.emplace_back(floor);
-        m_objectList.emplace_back(cylinder1);
-
-        m_lightList.emplace_back(MAKE_SHARED(PointLight, PointLight()));
+        // **************************************************************************************
+        // Construct and setup the lights.
+        // **************************************************************************************
+        m_lightList.emplace_back(MAKE_SHARED(qbRT::PointLight, qbRT::PointLight()));
         m_lightList.at(0)->m_location = {3.0, -10.0, -5.0};
         m_lightList.at(0)->m_color = {1.0, 1.0, 1.0};
+        m_lightList.at(0)->m_intensity = 4.0;
 
-        m_lightList.emplace_back(MAKE_SHARED(PointLight, PointLight()));
+        m_lightList.emplace_back(MAKE_SHARED(qbRT::PointLight, qbRT::PointLight()));
         m_lightList.at(1)->m_location = {0.0, -10.0, -5.0};
         m_lightList.at(1)->m_color = {1.0, 1.0, 1.0};
-        // Construct and setup the lights.
+        m_lightList.at(1)->m_intensity = 2.0;
     }
 
     bool Scene::Render(qbImage &outputImage) const {
@@ -164,6 +211,7 @@ namespace qbRT {
                 glm::dvec3 closestLocalColor{};
                 intersectionFound = CastRay(cameraRay, closestObject, closestIntPoint, closestLocalNormal, closestLocalColor);
                 if(intersectionFound) {
+                    // Check if the object has a material.
                     if(closestObject->m_hasMaterial) {
                         MaterialBase::m_reflectionRayCount = 0;
                         glm::dvec3 color = closestObject->m_pMaterial->ComputeColor(m_objectList, m_lightList, closestObject,
@@ -205,10 +253,7 @@ namespace qbRT {
                 }
             }
         }
+
         return intersectionFound;
     }
 }  // namespace qbRT
-
-DISABLE_WARNINGS_POP()
-
-// NOLINTEND(*-include-cleaner  *-easily-swappable-parameters)

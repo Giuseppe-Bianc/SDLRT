@@ -1,14 +1,14 @@
 //
 // Created by gbian on 11/07/2024.
 //
-
+// NOLINTBEGIN(*-include-cleaner)
 #include "SDLRT/rayTracing/primitives/Cone.hpp"
 
 namespace qbRT {
     DISABLE_WARNINGS_PUSH(26446 26447 26482 28020)
     static inline constexpr glm::dvec3 normalVector{0.0, 0.0, 1.0};
     bool Cone::TestIntersection(const Ray &castRay, glm::dvec3 &intPoint, glm::dvec3 &localNormal,
-                                glm::dvec3 &localColor) const noexcept {  // Copy the ray and apply the backwards transform.
+                                glm::dvec3 &localColor) noexcept {  // Copy the ray and apply the backwards transform.
         Ray bckRay = m_transformMatrix.Apply(castRay, BCKTFORM);
 
         // Copy the m_lab vector from bckRay and normalize it.
@@ -17,10 +17,13 @@ namespace qbRT {
         // Get the start point of the line.
         glm::dvec3 p = bckRay.m_point1;
 
-        // Compute a, b and c.
-        const double a = std::pow(v[0], 2.0) + std::pow(v[1], 2.0) - std::pow(v[2], 2.0);
-        const double b = 2 * (p[0] * v[0] + p[1] * v[1] - p[2] * v[2]);
-        const double c = std::pow(p[0], 2.0) + std::pow(p[1], 2.0) - std::pow(p[2], 2.0);
+        // // Compute a, b and c.
+        // const double a = std::pow(v[0], 2.0) + std::pow(v[1], 2.0) - std::pow(v[2], 2.0);
+        // const double b = 2 * (p[0] * v[0] + p[1] * v[1] - p[2] * v[2]);
+        // const double c = std::pow(p[0], 2.0) + std::pow(p[1], 2.0) - std::pow(p[2], 2.0);
+        const double a = glm::length2(glm::dvec2(v.x, v.y)) - v.z * v.z;
+        const double b = 2.0 * (p.x * v.x + p.y * v.y - p.z * v.z);
+        const double c = glm::length2(glm::dvec2(p.x, p.y)) - p.z * p.z;
         const double ad = (2 * a);
 
         // Compute b^2 - 4ac.
@@ -113,6 +116,13 @@ namespace qbRT {
 
             // Return the base color.
             localColor = m_baseColor;
+            // Compute and store the (u,v) coordinates.
+            double x = validPOI[0];
+            double y = validPOI[1];
+            double z = validPOI[2];
+            // double u = atan2(y, x) / C_D(PI);
+            // double v = (z * 2.0) + 1.0;
+            m_uvCoords = glm::dvec2(atan2(y, x) / C_D(PI), (z * 2.0) + 1.0);
 
             return true;
         } else {
@@ -129,6 +139,10 @@ namespace qbRT {
 
                     // Return the base color.
                     localColor = m_baseColor;
+                    // double x = validPOI[0];
+                    // double y = validPOI[1];
+                    // double z = validPOI[2];
+                    m_uvCoords = glm::dvec2(validPOI[0], validPOI[1]);
 
                     return true;
                 } else {
@@ -144,3 +158,4 @@ namespace qbRT {
     DISABLE_WARNINGS_POP()
 
 }  // namespace qbRT
+   // NOLINTEND(*-include-cleaner)

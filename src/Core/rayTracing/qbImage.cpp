@@ -41,6 +41,12 @@ void qbImage::SetPixel(const std::size_t x, const std::size_t y, const glm::dvec
     m_bChannel[x][y] = color[2];
 }
 
+void qbImage::SetPixel(const std::size_t x, const std::size_t y, const glm::dvec4 &color) noexcept {
+    m_rChannel[x][y] = color[0];
+    m_gChannel[x][y] = color[1];
+    m_bChannel[x][y] = color[2];
+}
+
 std::vector<std::uint32_t> qbImage::ArrangePixels() {
     ComputeMaxValues();
     vnd::Timer timer{"qbimage::ArrangePixels"};
