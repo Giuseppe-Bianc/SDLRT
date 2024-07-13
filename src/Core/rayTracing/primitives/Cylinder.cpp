@@ -6,8 +6,7 @@
 
 namespace qbRT {
     DISABLE_WARNINGS_PUSH(26446 26447 26482 28020)
-    bool Cylinder::TestIntersection(const Ray &castRay, glm::dvec3 &intPoint, glm::dvec3 &localNormal,
-                                    glm::dvec3 &localColor) const noexcept {
+    bool Cylinder::TestIntersection(const Ray &castRay, glm::dvec3 &intPoint, glm::dvec3 &localNormal, glm::dvec3 &localColor) noexcept {
         // Copy the ray and apply the backwards transform.
         qbRT::Ray bckRay = m_transformMatrix.Apply(castRay, qbRT::BCKTFORM);
 
@@ -17,14 +16,14 @@ namespace qbRT {
         // Get the start point of the line.
         const glm::dvec3 p = bckRay.m_point1;
 
-        // // Compute a, b and c.
-        // double a = std::pow(v[0], 2.0) + std::pow(v[1], 2.0);
-        // double b = 2.0 * (p[0] * v[0] + p[1] * v[1]);
-        // double c = std::pow(p[0], 2.0) + std::pow(p[1], 2.0) - 1.0;
+        // Compute a, b and c.
+        double a = std::pow(v[0], 2.0) + std::pow(v[1], 2.0);
+        double b = 2.0 * (p[0] * v[0] + p[1] * v[1]);
+        double c = std::pow(p[0], 2.0) + std::pow(p[1], 2.0) - 1.0;
 
-        const double a = glm::dot(v, v) - v.z * v.z;
-        const double b = 2.0 * (glm::dot(p, v) - p.z * v.z);
-        const double c = glm::dot(p, p) - p.z * p.z - 1.0;
+        // const double a = glm::dot(v, v) - v.z * v.z;
+        // const double b = 2.0 * (glm::dot(p, v) - p.z * v.z);
+        // const double c = glm::dot(p, p) - p.z * p.z - 1.0;
         const double ad = (2 * a);
         // Compute b^2 - 4ac.
         double numSQRT = std::sqrt(std::pow(b, 2.0) - 4 * a * c);
@@ -128,7 +127,11 @@ namespace qbRT {
 
             // Return the base color.
             localColor = m_baseColor;
-
+            double x = validPOI[0];
+            double y = validPOI[1];
+            double z = validPOI[2];
+            double u = atan2(y, x) / C_D(PI);
+            m_uvCoords = glm::dvec2(u, z);
             return true;
         } else {
             // Otherwise check the end caps.
@@ -145,6 +148,10 @@ namespace qbRT {
 
                     // Return the base color.
                     localColor = m_baseColor;
+                    double x = validPOI[0];
+                    double y = validPOI[1];
+                    // double z = validPOI[2];
+                    m_uvCoords = glm::dvec2(x, y);
 
                     return true;
                 } else {

@@ -17,6 +17,12 @@ add_library(core sample_library.cpp
         rayTracing/materials/SimpleMaterial.cpp
         rayTracing/primitives/Cylinder.cpp
         rayTracing/primitives/Cone.cpp
+        rayTracing/textures/TextureBase.cpp
+        rayTracing/textures/Flat.cpp
+        rayTracing/textures/Checker.cpp
+        rayTracing/materials/SimpleRefractive.cpp
+        rayTracing/textures/Image.cpp
+        ../../include/SDLRT/rayTracing/textures/Image.hpp
 )
 
 

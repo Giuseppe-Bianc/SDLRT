@@ -9,15 +9,18 @@ namespace qbRT {
     glm::dvec3 SimpleMaterial::ComputeColor(const std::vector<std::shared_ptr<ObjectBase>> &objectList,
                                             const std::vector<std::shared_ptr<LightBase>> &lightList,
                                             const std::shared_ptr<ObjectBase> &currentObject, const glm::dvec3 &intPoint,
-                                            const glm::dvec3 &localNormal, const Ray &cameraRay) noexcept {
+                                            glm::dvec3 &localNormal, const Ray &cameraRay) noexcept {
         // Define the initial material colors.
         glm::dvec3 matColor{};
         glm::dvec3 refColor{};
         glm::dvec3 difColor{};
         glm::dvec3 spcColor{};
 
-        // Compute the diffuse component.
-        difColor = ComputeDiffuseColor(objectList, lightList, currentObject, intPoint, localNormal, m_baseColor);
+        if(!m_hasTexture)
+            difColor = ComputeDiffuseColor(objectList, lightList, currentObject, intPoint, localNormal, m_baseColor);
+        else
+            difColor = ComputeDiffuseColor(objectList, lightList, currentObject, intPoint, localNormal,
+                                           glm::dvec3(m_textureList.at(0)->GetColor(currentObject->m_uvCoords)));
 
         // Compute the reflection component.
         if(m_reflectivity > 0.0) {

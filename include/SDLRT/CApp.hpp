@@ -10,6 +10,8 @@
 #include "rayTracing/Camera.hpp"
 #include "rayTracing/Scene.hpp"
 #include "rayTracing/qbImage.hpp"
+#include "rayTracing/textures/Checker.hpp"
+#include "rayTracing/textures/Flat.hpp"
 class CApp {
 public:
     CApp() noexcept;

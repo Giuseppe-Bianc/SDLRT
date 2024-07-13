@@ -8,7 +8,7 @@ static inline constexpr auto EPSILON = 1e-30;
 
 namespace qbRT {
     bool ObjectBase::TestIntersection([[maybe_unused]] const Ray &castRay, [[maybe_unused]] glm::dvec3 &intPoint,
-                                      [[maybe_unused]] glm::dvec3 &localNormal, [[maybe_unused]] glm::dvec3 &localColor) const noexcept {
+                                      [[maybe_unused]] glm::dvec3 &localNormal, [[maybe_unused]] glm::dvec3 &localColor) noexcept {
         return false;
     }
     bool ObjectBase::AssignMaterial(const std::shared_ptr<MaterialBase> &objectMaterial) noexcept {

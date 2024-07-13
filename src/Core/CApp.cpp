@@ -34,7 +34,6 @@ bool CApp::OnInit() {
 
         // Render the scene.
         m_scene.Render(m_image);
-
         m_pixels = m_image.ArrangePixels();
     } else [[unlikely]] {
         LERROR("SDL_CreateWindow Error: {}", SDL_GetError());

@@ -8,7 +8,7 @@ namespace qbRT {
     glm::dvec3 MaterialBase::ComputeColor([[maybe_unused]] const std::vector<std::shared_ptr<ObjectBase>> &objectList,
                                           [[maybe_unused]] const std::vector<std::shared_ptr<LightBase>> &lightList,
                                           [[maybe_unused]] const std::shared_ptr<ObjectBase> &currentObject,
-                                          [[maybe_unused]] const glm::dvec3 &intPoint, [[maybe_unused]] const glm::dvec3 &localNormal,
+                                          [[maybe_unused]] const glm::dvec3 &intPoint, [[maybe_unused]] glm::dvec3 &localNormal,
                                           [[maybe_unused]] const Ray &cameraRay) noexcept {
         // Define an initial material color.
         glm::dvec3 matColor{};
@@ -44,6 +44,9 @@ namespace qbRT {
             diffuseColor[0] = red * baseColor[0];
             diffuseColor[1] = green * baseColor[1];
             diffuseColor[2] = blue * baseColor[2];
+        } else {
+            // The ambient light condition.
+            for(int i = 0; i < 3; ++i) diffuseColor[i] = (m_ambientColor[i] * m_ambientIntensity) * baseColor[i];
         }
 
         // Return the material color.
@@ -138,4 +141,9 @@ namespace qbRT {
         return intersectionFound;
     }
     DISABLE_WARNINGS_POP()
+    void MaterialBase::AssignTexture(const std::shared_ptr<Texture::TextureBase> &inputTexture) {
+        m_textureList.emplace_back(inputTexture);
+        m_hasTexture = true;
+    }
+
 }  // namespace qbRT
